@@ -2,6 +2,9 @@
 
 ## Feature
 
+## Terminology
+
+
 ## Introduce
 
 ## Quick Start

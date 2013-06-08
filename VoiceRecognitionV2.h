@@ -116,9 +116,15 @@ public:
 	
 	int recognize(uint8_t *buf, int timeout = VR_DEFAULT_TIMEOUT);
 	
-	int train(uint8_t record);
+	int train(uint8_t *records, uint8_t len=1);
 	int load(uint8_t *records, uint8_t len=1);
 	int clear();
+	
+	int addSignature(uint8_t record, uint8_t *buf, uint8_t len);
+	int addSignature(uint8_t record, char *buf);
+	
+	int checkRecognizer(uint8_t *buf);
+	int checkRecord(uint8_t *buf, uint8_t *records = 0, uint8_t len = 0);
 	
 	int test(uint8_t cmd, uint8_t *bsr);
 	
@@ -129,6 +135,8 @@ public:
 	int len(PROGMEM uint8_t *buf);
 	int cmp(uint8_t *buf, PROGMEM uint8_t *bufcmp, int len  );
 	void cpy(char *buf,  PROGMEM char * pbuf);
+	void sort(uint8_t *buf, int len);
+	int cleanDup(uint8_t *des, uint8_t *buf, int len);
 	void send_pkt(uint8_t cmd, uint8_t *buf, uint8_t len);
 	void send_pkt(uint8_t cmd, uint8_t subcmd, uint8_t *buf, uint8_t len);
 	int receive(uint8_t *buf, int len, int timeout = VR_DEFAULT_TIMEOUT);
@@ -138,17 +146,3 @@ private:
 	static VR*  instance;
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-  

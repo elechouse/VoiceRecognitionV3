@@ -63,22 +63,25 @@ int VR :: recognize(uint8_t *buf, int timeout)
 	return 0;
 }
 
-int VR :: train(uint8_t record)
+int VR :: train(uint8_t *records, uint8_t len)
 {
-	int len;
+	int ret;
 	unsigned long start_millis;
+	if(len == 0){
+		return -1;
+	}
 	
-	send_pkt(FRAME_CMD_TRAIN, &record, 1);
+	send_pkt(FRAME_CMD_TRAIN, records, len);
 	start_millis = millis();
 	while(1){
-		len = receive_pkt(vr_buf);
-		if(len>0){
+		ret = receive_pkt(vr_buf);
+		if(ret>0){
 			switch(vr_buf[2]){
 				case FRAME_CMD_PROMPT:
 					DBGSTR("Record:\t");
 					DBGFMT(vr_buf[3], DEC);
 					DBGSTR("\t");
-					DBGBUF(vr_buf+4, len-4);
+					DBGBUF(vr_buf+4, ret-4);
 					break;
 				case FRAME_CMD_TRAIN:
 					DBGSTR("Train finish.\r\nSuccess: \t");
@@ -141,6 +144,20 @@ int VR :: load(uint8_t *records, uint8_t len)
 	return 0;
 }
 
+int VR :: addSignature(uint8_t record, uint8_t *buf, uint8_t len)
+{
+	if(buf == 0){
+		return -1;
+	}
+}
+
+int VR :: addSignature(uint8_t record, char *buf)
+{
+	if(buf == 0){
+		return -1;
+	}
+}
+
 int VR :: clear()
 {	
 	int len;
@@ -153,8 +170,85 @@ int VR :: clear()
 	if(vr_buf[2] != FRAME_CMD_CLEAR){
 		return -1;
 	}
-	DBGLN("VR Module Cleared");
+	//DBGLN("VR Module Cleared");
 	return 0;
+}
+
+int VR :: checkRecognizer(uint8_t *buf)
+{
+	int len;
+	send_pkt(FRAME_CMD_CHECK_BSR, 0, 0);
+	len = receive_pkt(vr_buf);
+	if(len<=0){
+		return -1;
+	}
+
+	if(vr_buf[2] != FRAME_CMD_CHECK_BSR){
+		return -1;
+	}
+	
+	if(vr_buf[1] != 0x0D){
+		return -1;
+	}
+	
+	memcpy(buf, vr_buf+3, vr_buf[1]-2);
+	
+	return vr_buf[1]-2;
+}
+
+int VR :: checkRecord(uint8_t *buf, uint8_t *records, uint8_t len)
+{
+	int ret;
+	int cnt = 0;
+	unsigned long start_millis;
+	if(records == 0 && len==0){
+		send_pkt(FRAME_CMD_CHECK_TRAIN, 0xFF, 0, 0);
+		start_millis = millis();
+		while(1){
+			len = receive_pkt(vr_buf);
+			if(len>0){
+				if(vr_buf[2] == FRAME_CMD_CHECK_TRAIN){
+					memcpy(buf+1+10*cnt, vr_buf+4, vr_buf[1]-3);
+					cnt++;
+					if(cnt == 16){
+						buf[0] = 80;
+						return vr_buf[3];
+					}
+				}else{
+					return -3;
+				}
+				start_millis = millis();
+			}
+			
+			if(millis()-start_millis > 500){
+				if(cnt>0){
+					buf[0] = cnt*5;
+					return vr_buf[3];
+				}
+				return -2;
+			}
+			
+		}
+		
+	}else if(len>0){
+		ret = cleanDup(vr_buf, records, len);
+		send_pkt(FRAME_CMD_CHECK_TRAIN, vr_buf, ret);
+		ret = receive_pkt(vr_buf);
+		if(ret>0){
+			if(vr_buf[2] == FRAME_CMD_CHECK_TRAIN){
+				memcpy(buf+1, vr_buf+4, vr_buf[1]-3);
+				buf[0] = (vr_buf[1]-3)/2;
+				return vr_buf[3];
+			}else{
+				return -3;
+			}
+		}else{
+			return -1;
+		}
+	}else{
+		return -1;
+	}
+	
 }
 
 int VR :: test(uint8_t cmd, uint8_t *bsr)
@@ -245,6 +339,60 @@ void VR :: cpy(char *buf,  PROGMEM char * pbuf)
     i++;
   }
 }
+
+void VR :: sort(uint8_t *buf, int len)
+{
+	int i, j;
+	uint8_t tmp;
+	for(i=0; i<len; i++){
+		for(j=i+1; j<len; j++){
+			if(buf[j] < buf[i]){
+				tmp = buf[i];
+				buf[i] = buf[j]; 
+				buf[j] = tmp;
+			}
+		}
+	}
+}
+
+int VR :: cleanDup(uint8_t *des, uint8_t *buf, int len)
+{	
+	if(len<1){
+		return -1;
+	}
+	
+	int i, j, k=0;
+	for(i=0; i<len; i++){
+		for(j=0; j<k; j++){
+			if(buf[i] == des[j]){
+				break;
+			}
+		}
+		if(j==k){
+			des[k] = buf[i];
+			k++;
+		}
+	}
+	return k;
+#if 0
+	int i=0, j=1, k=0;
+	sort(buf, len);
+	for(; j<len; ){
+		des[k] = buf[i];
+		k++;
+		while(buf[i]==buf[j]){
+			j++;
+			if(j==len){
+				return k;
+			}
+		}
+		i=j;
+	}
+	return k;
+#endif
+}
+
+
 int VR :: writehex(uint8_t *buf, uint8_t len)
 {
 	int i;
@@ -253,6 +401,7 @@ int VR :: writehex(uint8_t *buf, uint8_t len)
 		DBGCHAR(hextab[(buf[i]&0x0F)]);
 		DBGCHAR(' ');
 	}
+	return len;
 }
 
 void VR :: send_pkt(uint8_t cmd, uint8_t subcmd, uint8_t *buf, uint8_t len)
