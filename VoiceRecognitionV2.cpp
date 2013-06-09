@@ -35,11 +35,6 @@ VR* VR::instance;
 uint8_t vr_buf[32];
 uint8_t hextab[17]="0123456789ABCDEF";
 
-static char str[][16] PROGMEM = {
-	"Success",
-	"Failed",
-};
-
 VR::VR(uint8_t receivePin, uint8_t transmitPin) : SoftwareSerial(receivePin, transmitPin)
 {
 	instance = this;
@@ -101,6 +96,52 @@ int VR :: train(uint8_t *records, uint8_t len)
 	return 0;
 }
 
+int VR :: trainWithSignature(uint8_t record, const void *buf, uint8_t len)
+{
+	int ret;
+	unsigned long start_millis;
+	if(len){
+		send_pkt(FRAME_CMD_SIG_TRAIN, record, (uint8_t *)buf, len);
+	}else{
+		if(buf == 0){
+			return -1;
+		}
+		len = strlen((char *)buf);
+		if(len>10){
+			return -1;
+		}
+		send_pkt(FRAME_CMD_SIG_TRAIN, record, (uint8_t *)buf, len);
+	}
+	
+	start_millis = millis();
+	while(1){
+		ret = receive_pkt(vr_buf);
+		if(ret>0){
+			switch(vr_buf[2]){
+				case FRAME_CMD_PROMPT:
+					DBGSTR("Record:\t");
+					DBGFMT(vr_buf[3], DEC);
+					DBGSTR("\t");
+					DBGBUF(vr_buf+4, ret-4);
+					break;
+				case FRAME_CMD_SIG_TRAIN:
+					DBGSTR("Train finish.\r\nSuccess: \t");
+					DBGFMT(vr_buf[3], DEC);
+					DBGSTR(" \r\n");
+					return 0;
+					break;
+				default:
+					break;
+			}
+			start_millis = millis();
+		}
+		if(millis()-start_millis > 4000){
+			return -2;
+		}
+	}
+	return 0;
+}
+
 int VR :: load(uint8_t *records, uint8_t len)
 {
 	uint8_t ret;
@@ -144,17 +185,57 @@ int VR :: load(uint8_t *records, uint8_t len)
 	return 0;
 }
 
-int VR :: addSignature(uint8_t record, uint8_t *buf, uint8_t len)
+int VR :: setSignature(uint8_t record, const void *buf, uint8_t len)
 {
-	if(buf == 0){
+	int ret;
+	
+	if(len == 0 && buf == 0){
+		/** delete signature */
+	}else if(len == 0 && buf != 0){
+		if(buf == 0){
+			return -1;
+		}
+		len = strlen((char *)buf);
+		if(len>10){
+			return -1;
+		}
+	}else if(len != 0 && buf != 0){
+		
+	}else{
 		return -1;
 	}
+	send_pkt(FRAME_CMD_SET_SIG, record, (uint8_t *)buf, len);
+	ret = receive_pkt(vr_buf);
+	if(ret<=0){
+		return -1;
+	}
+	if(vr_buf[2] != FRAME_CMD_SET_SIG){
+		return -1;
+	}
+	return 0;
 }
 
-int VR :: addSignature(uint8_t record, char *buf)
+int VR :: checkSignature(uint8_t record, uint8_t *buf)
 {
-	if(buf == 0){
+	int ret;
+	if(record < 0){
 		return -1;
+	}
+	send_pkt(FRAME_CMD_CHECK_SIG, record, 0, 0);
+	ret = receive_pkt(vr_buf);
+	
+	if(ret<=0){
+		return -1;
+	}
+	if(vr_buf[2] != FRAME_CMD_CHECK_SIG){
+		return -1;
+	}
+
+	if(vr_buf[4]>0){
+		memcpy(buf, vr_buf+5, vr_buf[4]);
+		return vr_buf[4];
+	}else{
+		return 0;
 	}
 }
 
@@ -251,6 +332,132 @@ int VR :: checkRecord(uint8_t *buf, uint8_t *records, uint8_t len)
 	
 }
 
+int VR :: setBaudRate(unsigned long br)
+{
+	uint8_t baud_rate;
+	int ret;
+	switch(br){
+		case 2400:
+			baud_rate = 1;
+			break;
+		case 4800:
+			baud_rate = 2;
+			break;
+		case 9600:
+			baud_rate = 0;
+			//baud_rate = 3;
+			break;
+		case 19200:
+			baud_rate = 4;
+			break;
+		case 38400:
+			baud_rate = 5;
+			break;
+		default:
+			return -1;
+			break;
+	}
+	
+	send_pkt(FRAME_CMD_SET_BR, baud_rate, 0, 0);
+	ret = receive_pkt(vr_buf);
+	if(ret<=0){
+		return -1;
+	}
+
+	if(vr_buf[2] != FRAME_CMD_SET_BR){
+		return -1;
+	}
+	//DBGLN("VR Module Cleared");
+	return 0;
+	
+}
+
+int VR :: setIOMode(io_mode_t mode)
+{
+	if(mode > 3){
+		return -1;
+	}
+	int ret;
+	
+	send_pkt(FRAME_CMD_SET_IOM, mode, 0, 0);
+	ret = receive_pkt(vr_buf);
+	if(ret<=0){
+		return -1;
+	}
+
+	if(vr_buf[2] != FRAME_CMD_SET_IOM){
+		return -1;
+	}
+	return 0;
+}
+
+int VR :: resetIO(uint8_t *ios, uint8_t len)
+{
+	int ret;
+	if(len == 1 && ios == 0){
+		send_pkt(FRAME_CMD_RESET_IO, 0xFF, 0, 0);
+	}else if(len != 0 && ios != 0){
+		send_pkt(FRAME_CMD_RESET_IO, ios, len);
+	}else{
+		return -1;
+	}
+
+	ret = receive_pkt(vr_buf);
+	if(ret<=0){
+		return -1;
+	}
+	if(vr_buf[2] != FRAME_CMD_RESET_IO){
+		return -1;
+	}
+	return 0;
+}
+
+int VR :: setPulseWidth(uint8_t level)
+{
+	int ret;
+	
+	if(level > VR::LEVEL15){
+		return -1;
+	}
+	
+	send_pkt(FRAME_CMD_SET_PW, level, 0, 0);
+	ret = receive_pkt(vr_buf);
+	if(ret<=0){
+		return -1;
+	}
+
+	if(vr_buf[2] != FRAME_CMD_SET_PW){
+		return -1;
+	}
+	return 0;
+}
+
+int VR :: setAutoLoad(uint8_t *records, uint8_t len)
+{
+	int ret;
+	uint8_t map;
+	if(len == 0 && records == 0){
+		map = 0;
+	}else if(len != 0 && records != 0){
+		map = 0;
+		for(int i=0; i<len; i++){
+			map |= (1<<i);
+		}
+	}else{
+		return -1;
+	}
+	
+	send_pkt(FRAME_CMD_SET_AL, map, records, len);
+	ret = receive_pkt(vr_buf);
+	if(ret<=0){
+		return -1;
+	}
+	if(vr_buf[2] != FRAME_CMD_SET_AL){
+		return -1;
+	}
+	return 0;
+}
+
 int VR :: test(uint8_t cmd, uint8_t *bsr)
 {
 	int len, i;
@@ -311,7 +518,7 @@ int VR :: test(uint8_t cmd, uint8_t *bsr)
 	return 0;
 }
 
-int VR :: len(PROGMEM uint8_t *buf)
+int VR :: len(uint8_t *buf)
 {
 	int i=0;
 	while(pgm_read_byte_near(buf++)){
@@ -320,7 +527,7 @@ int VR :: len(PROGMEM uint8_t *buf)
 	return i;
 }
 
-int VR :: cmp(uint8_t *buf, PROGMEM uint8_t *bufcmp, int len  )
+int VR :: cmp(uint8_t *buf, uint8_t *bufcmp, int len  )
 {
 	int i;
 	for(i=0; i<len; i++){
@@ -331,7 +538,7 @@ int VR :: cmp(uint8_t *buf, PROGMEM uint8_t *bufcmp, int len  )
 	return 0;
 }
 
-void VR :: cpy(char *buf,  PROGMEM char * pbuf)
+void VR :: cpy(char *buf, char * pbuf)
 {
   int i=0;
   while(pgm_read_byte_near(pbuf)){
@@ -423,7 +630,7 @@ void VR :: send_pkt(uint8_t cmd, uint8_t *buf, uint8_t len)
 	write(FRAME_END);
 }
 
-int VR :: receive_pkt(uint8_t *buf, int timeout)
+int VR :: receive_pkt(uint8_t *buf, uint16_t timeout)
 {
 	int ret;
 	ret = receive(buf, 2, timeout);
@@ -446,7 +653,7 @@ int VR :: receive_pkt(uint8_t *buf, int timeout)
 	return buf[1]+2;
 }
 
-int VR::receive(uint8_t *buf, int len, int timeout)
+int VR::receive(uint8_t *buf, int len, uint16_t timeout)
 {
   int read_bytes = 0;
   int ret;

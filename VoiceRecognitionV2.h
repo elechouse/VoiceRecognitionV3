@@ -64,7 +64,8 @@
 
 #define FRAME_CMD_SET_BR					(0x03)	//baud rate
 #define FRAME_CMD_SET_IOM					(0x04)	//IO mode
-#define FRAME_CMD_SET_PW					(0x05)	//pulse width					
+#define FRAME_CMD_RESET_IO					(0x17)	// reset IO OUTPUT
+#define FRAME_CMD_SET_PW					(0x05)	//pulse width
 #define FRAME_CMD_SET_AL					(0x07)	// Auto load
 #define FRAME_CMD_RESET						(0x06)	//reset configuration
 
@@ -77,7 +78,7 @@
 #define FRAME_CMD_LOAD						(0x10)	//Load N records
 #define FRAME_CMD_CLEAR						(0x12)	//Clear BSR buffer
 #define FRAME_CMD_LSGRP						(0x08)	//Load system group
-#define FRAME_CMD_LUGRP						(0x09)	//Load user defined group						
+#define FRAME_CMD_LUGRP						(0x09)	//Load user defined group
 #define FRAME_CMD_GROUP						(0x15)  //
 	#define FRAME_CMD_GROUP_SET							(0x00)  //
 	#define FRAME_CMD_GROUP_SUGRP						(0x01)  //
@@ -114,15 +115,47 @@ public:
 	   return instance;
 	}
 	
+	typedef enum{
+		PULSE = 0,
+		TOGGLE = 1,
+		SET = 2, 
+		CLEAR = 3
+	}io_mode_t;
+	
+	typedef enum{
+		LEVEL0 = 0,
+		LEVEL1,
+		LEVEL2, 
+		LEVEL3,
+		LEVEL4,
+		LEVEL5,
+		LEVEL6,
+		LEVEL7,
+		LEVEL8,
+		LEVEL9,
+		LEVEL10,
+		LEVEL11,
+		LEVEL12,
+		LEVEL13,
+		LEVEL14,
+		LEVEL15,
+	}pulse_width_level_t;
+	
+	int setBaudRate(unsigned long br);
+	int setIOMode(io_mode_t mode);
+	int resetIO(uint8_t *ios=0, uint8_t len=1);
+	int setPulseWidth(uint8_t level);
+	int setAutoLoad(uint8_t *records=0, uint8_t len = 0);
+	
 	int recognize(uint8_t *buf, int timeout = VR_DEFAULT_TIMEOUT);
 	
 	int train(uint8_t *records, uint8_t len=1);
+	int trainWithSignature(uint8_t record, const void *buf, uint8_t len=0);
 	int load(uint8_t *records, uint8_t len=1);
 	int clear();
+	int setSignature(uint8_t record, const void *buf=0, uint8_t len=0);
 	
-	int addSignature(uint8_t record, uint8_t *buf, uint8_t len);
-	int addSignature(uint8_t record, char *buf);
-	
+	int checkSignature(uint8_t record, uint8_t *buf);
 	int checkRecognizer(uint8_t *buf);
 	int checkRecord(uint8_t *buf, uint8_t *records = 0, uint8_t len = 0);
 	
@@ -132,15 +165,15 @@ public:
 	
 /***************************************************************************/
 	/** low level */
-	int len(PROGMEM uint8_t *buf);
-	int cmp(uint8_t *buf, PROGMEM uint8_t *bufcmp, int len  );
-	void cpy(char *buf,  PROGMEM char * pbuf);
+	int len(uint8_t *buf);
+	int cmp(uint8_t *buf, uint8_t *bufcmp, int len  );
+	void cpy(char *buf,  char * pbuf);
 	void sort(uint8_t *buf, int len);
 	int cleanDup(uint8_t *des, uint8_t *buf, int len);
 	void send_pkt(uint8_t cmd, uint8_t *buf, uint8_t len);
 	void send_pkt(uint8_t cmd, uint8_t subcmd, uint8_t *buf, uint8_t len);
-	int receive(uint8_t *buf, int len, int timeout = VR_DEFAULT_TIMEOUT);
-	int receive_pkt(uint8_t *buf, int timeout = VR_DEFAULT_TIMEOUT);
+	int receive(uint8_t *buf, int len, uint16_t timeout = VR_DEFAULT_TIMEOUT);
+	int receive_pkt(uint8_t *buf, uint16_t timeout = VR_DEFAULT_TIMEOUT);
 /***************************************************************************/
 private:
 	static VR*  instance;
