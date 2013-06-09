@@ -141,6 +141,18 @@ public:
 		LEVEL15,
 	}pulse_width_level_t;
 	
+	typedef enum{
+		GROUP0 = 0,
+		GROUP1,
+		GROUP2,
+		GROUP3,
+		GROUP4,
+		GROUP5,
+		GROUP6,
+		GROUP7,
+		GROUP_ALL = 0xFF,
+	}group_t;
+	
 	int setBaudRate(unsigned long br);
 	int setIOMode(io_mode_t mode);
 	int resetIO(uint8_t *ios=0, uint8_t len=1);
@@ -158,6 +170,15 @@ public:
 	int checkSignature(uint8_t record, uint8_t *buf);
 	int checkRecognizer(uint8_t *buf);
 	int checkRecord(uint8_t *buf, uint8_t *records = 0, uint8_t len = 0);
+	
+	/** group control */
+	int setGroupControl(uint8_t ctrl);
+	int checkGroupControl();
+	int setUserGroup(uint8_t grp, uint8_t *records, uint8_t len);
+	int checkUserGroup(uint8_t grp, uint8_t *buf);
+	int loadSystemGroup(uint8_t grp, uint8_t *buf=0);
+	int loadUserGroup(uint8_t grp, uint8_t *buf=0);
+	
 	
 	int test(uint8_t cmd, uint8_t *bsr);
 	

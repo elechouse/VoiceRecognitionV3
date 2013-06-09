@@ -332,6 +332,181 @@ int VR :: checkRecord(uint8_t *buf, uint8_t *records, uint8_t len)
 	
 }
 
+/** group control */
+int VR :: setGroupControl(uint8_t ctrl)
+{
+	int ret;
+	if(ctrl>2){
+		return -1;
+	}
+	
+	send_pkt(FRAME_CMD_GROUP, FRAME_CMD_GROUP_SET, &ctrl, 1);
+	ret = receive_pkt(vr_buf);
+	if(ret<=0){
+		return -1;
+	}
+
+	if(vr_buf[2] != FRAME_CMD_GROUP){
+		return -1;
+	}
+	return 0;
+}
+
+int VR :: checkGroupControl()
+{
+	uint8_t cmd;
+	int ret;
+	cmd = 0xFF;
+	send_pkt(FRAME_CMD_GROUP, FRAME_CMD_GROUP_SET, &cmd, 1);
+	ret = receive_pkt(vr_buf);
+	if(ret<=0){
+		return -1;
+	}
+
+	if(vr_buf[2] != FRAME_CMD_GROUP){
+		return -1;
+	}
+	ret = vr_buf[5];
+	if(ret == 0xFF){
+		ret = 0;
+	}
+	return ret;
+}
+
+int VR :: setUserGroup(uint8_t grp, uint8_t *records, uint8_t len)
+{
+	int ret;
+	if(len == 0 || records == 0){
+		return -1;
+	}
+	if(grp >= 8){
+		return -1;
+	}
+	vr_buf[0] = grp;
+	memcpy(vr_buf+1, records, len);
+	send_pkt(FRAME_CMD_GROUP, FRAME_CMD_GROUP_SUGRP, vr_buf, len+1);
+	ret = receive_pkt(vr_buf);
+	if(ret<=0){
+		return -1;
+	}
+	if(vr_buf[2] != FRAME_CMD_GROUP){
+		return -1;
+	}
+	return 0;
+}
+
+int VR :: checkUserGroup(uint8_t grp, uint8_t *buf)
+{
+	int ret;
+	int cnt = 0;
+	unsigned long start_millis;
+	
+	if(grp == GROUP_ALL){
+		send_pkt(FRAME_CMD_GROUP, FRAME_CMD_GROUP_CUGRP, 0, 0);
+		start_millis = millis();
+		while(1){
+			ret = receive_pkt(vr_buf);
+			if(ret>0){
+				if(vr_buf[2] == FRAME_CMD_GROUP && vr_buf[1] == 10){
+					memcpy(buf+8*cnt, vr_buf+3, vr_buf[1]-2);
+					cnt++;
+					if(cnt == 8){
+						return cnt;
+					}
+				}else{
+					return -3;
+				}
+				start_millis = millis();
+			}
+			
+			if(millis()-start_millis > 500){
+				if(cnt>0){
+					return cnt;
+				}
+				return -2;
+			}
+			
+		}
+	}else if(grp <= GROUP7){
+		send_pkt(FRAME_CMD_GROUP, FRAME_CMD_GROUP_CUGRP, &grp, 1);
+		ret = receive_pkt(vr_buf);
+		if(ret>0){
+			if(vr_buf[2] == FRAME_CMD_GROUP && vr_buf[1] == 10){
+				memcpy(buf+8*cnt, vr_buf+3, vr_buf[1]-2);
+				return 1;
+			}else{
+				return -3;
+			}
+		}else{
+			return -2;
+		}
+	}else{
+		return -1;
+	}
+}
+
+int VR :: loadSystemGroup(uint8_t grp, uint8_t *buf)
+{
+	int ret;
+	if(grp > 10){
+		return -1;
+	}
+	send_pkt(FRAME_CMD_GROUP, FRAME_CMD_GROUP_LSGRP, &grp, 1);
+	ret = receive_pkt(vr_buf);
+	
+	if(ret <= 0){
+		return -1;
+	}
+	
+	if(vr_buf[2] != FRAME_CMD_GROUP){
+		return -1;
+	}
+	
+	if(buf != 0){
+		vr_buf[3] = 0;
+		for(int i=0; i<8; i++){
+			if(vr_buf[12]&(1<<i)){
+				vr_buf[3]++;
+			}
+		}
+		memcpy(buf, vr_buf+3, 11);
+		return 1;
+	}
+	
+	return 0;
+}
+
+int VR :: loadUserGroup(uint8_t grp, uint8_t *buf)
+{
+	int ret;
+	if(grp > GROUP7){
+		return -1;
+	}
+	send_pkt(FRAME_CMD_GROUP, FRAME_CMD_GROUP_LUGRP, &grp, 1);
+	ret = receive_pkt(vr_buf);
+	
+	if(ret <= 0){
+		return -1;
+	}
+	
+	if(vr_buf[2] != FRAME_CMD_GROUP){
+		return -1;
+	}
+	
+	if(buf != 0){
+		vr_buf[3] = 0;
+		for(int i=0; i<8; i++){
+			if(vr_buf[12]&(1<<i)){
+				vr_buf[3]++;
+			}
+		}
+		memcpy(buf, vr_buf+3, 11);
+		return 1;
+	}
+	
+	return 0;
+}
+
 int VR :: setBaudRate(unsigned long br)
 {
 	uint8_t baud_rate;
