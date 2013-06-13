@@ -2,7 +2,9 @@
 
 ## Feature
 - Recognize 7 voice command 
+
 ## Terminology
+
 - **record**
 - **recognizer**
 - **recognizer index**
