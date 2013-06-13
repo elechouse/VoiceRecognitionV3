@@ -58,7 +58,7 @@ int VR :: recognize(uint8_t *buf, int timeout)
 	return 0;
 }
 
-int VR :: train(uint8_t *records, uint8_t len)
+int VR :: train(uint8_t *records, uint8_t len, uint8_t *buf)
 {
 	int ret;
 	unsigned long start_millis;
@@ -79,6 +79,10 @@ int VR :: train(uint8_t *records, uint8_t len)
 					DBGBUF(vr_buf+4, ret-4);
 					break;
 				case FRAME_CMD_TRAIN:
+					if(buf != 0){
+						memcpy(buf, vr_buf+3, vr_buf[1]-2);
+						return vr_buf[1]-2;
+					}
 					DBGSTR("Train finish.\r\nSuccess: \t");
 					DBGFMT(vr_buf[3], DEC);
 					DBGSTR(" \r\n");
@@ -96,7 +100,7 @@ int VR :: train(uint8_t *records, uint8_t len)
 	return 0;
 }
 
-int VR :: trainWithSignature(uint8_t record, const void *buf, uint8_t len)
+int VR :: trainWithSignature(uint8_t record, const void *buf, uint8_t len, uint8_t * retbuf)
 {
 	int ret;
 	unsigned long start_millis;
@@ -125,9 +129,15 @@ int VR :: trainWithSignature(uint8_t record, const void *buf, uint8_t len)
 					DBGBUF(vr_buf+4, ret-4);
 					break;
 				case FRAME_CMD_SIG_TRAIN:
+					if(retbuf != 0){
+						memcpy(retbuf, vr_buf+3, vr_buf[1]-2);
+						return vr_buf[1]-2;
+					}
+				
 					DBGSTR("Train finish.\r\nSuccess: \t");
 					DBGFMT(vr_buf[3], DEC);
 					DBGSTR(" \r\n");
+					writehex(vr_buf, vr_buf[1]+2);
 					return 0;
 					break;
 				default:
@@ -142,7 +152,7 @@ int VR :: trainWithSignature(uint8_t record, const void *buf, uint8_t len)
 	return 0;
 }
 
-int VR :: load(uint8_t *records, uint8_t len)
+int VR :: load(uint8_t *records, uint8_t len, uint8_t *buf)
 {
 	uint8_t ret;
 	send_pkt(FRAME_CMD_LOAD, records, len);
@@ -153,34 +163,27 @@ int VR :: load(uint8_t *records, uint8_t len)
 	if(vr_buf[2] != FRAME_CMD_LOAD){
 		return -1;
 	}
-	DBGSTR("Success: \t");
-	DBGFMT(vr_buf[3], DEC);
-	DBGSTR("\r\n");
-	for(ret = 0; ret < vr_buf[1]-3; ret += 2){
-		DBGSTR("Record:\t");
-		DBGFMT(vr_buf[4+ret], DEC);
-		DBGSTR("\t");
-		switch(vr_buf[4+ret+1]){
-			case 0xFF:
-				DBGSTR("Out Of Range");
-				break;
-			case 0xFE:
-				DBGSTR("Untrained");
-				break;
-			case 0xFD:
-				DBGSTR("VR Full");
-				break;
-			case 0xFC:
-				DBGSTR("Already Loaded");
-				break;
-			case 0:
-				DBGSTR("Success");
-				break;
-			default:
-				DBGSTR("Unknown");
-				break;
-		}
-		DBGLN("");
+	if(buf != 0){
+		memcpy(buf, vr_buf+3, vr_buf[1]-2);
+		return vr_buf[1]-2;
+	}
+	return 0;
+}
+
+int VR :: load(uint8_t record, uint8_t *buf)
+{
+	uint8_t ret;
+	send_pkt(FRAME_CMD_LOAD, &record, 1);
+	ret = receive_pkt(vr_buf);
+	if(ret<=0){
+		return -1;
+	}
+	if(vr_buf[2] != FRAME_CMD_LOAD){
+		return -1;
+	}
+	if(buf != 0){
+		memcpy(buf, vr_buf+3, vr_buf[1]-2);
+		return vr_buf[1]-2;
 	}
 	return 0;
 }
@@ -798,6 +801,9 @@ void VR :: send_pkt(uint8_t cmd, uint8_t subcmd, uint8_t *buf, uint8_t len)
 
 void VR :: send_pkt(uint8_t cmd, uint8_t *buf, uint8_t len)
 {
+	while(available()){
+		flush();
+	}
 	write(FRAME_HEAD);
 	write(len+2);
 	write(cmd);

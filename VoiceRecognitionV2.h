@@ -161,9 +161,10 @@ public:
 	
 	int recognize(uint8_t *buf, int timeout = VR_DEFAULT_TIMEOUT);
 	
-	int train(uint8_t *records, uint8_t len=1);
-	int trainWithSignature(uint8_t record, const void *buf, uint8_t len=0);
-	int load(uint8_t *records, uint8_t len=1);
+	int train(uint8_t *records, uint8_t len=1, uint8_t *buf = 0);
+	int trainWithSignature(uint8_t record, const void *buf, uint8_t len=0, uint8_t *retbuf = 0);
+	int load(uint8_t *records, uint8_t len=1, uint8_t *buf = 0);
+	int load(uint8_t record, uint8_t *buf = 0);
 	int clear();
 	int setSignature(uint8_t record, const void *buf=0, uint8_t len=0);
 	
