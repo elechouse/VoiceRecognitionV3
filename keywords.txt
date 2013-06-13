@@ -6,8 +6,8 @@
 # Datatypes (KEYWORD1)
 #######################################
 
-VR	KEYWORD1
-
+VR	KEYWORD3
+myVR	KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
