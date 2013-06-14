@@ -11,13 +11,14 @@
          
    COMMAND        FORMAT                        EXAMPLE                    Comment
    
-   train          train (r0) (r1)...            train 0 2 14               Train records
-   load           load (r0) (r1) ...            load 0 1 2 3               Load records
+   train          train (r0) (r1)...            train 0 2 45               Train records
+   load           load (r0) (r1) ...            load 0 51 2 3              Load records
    clear          clear                         clear                      remove all records in  Recognizer
    record         record / record (r0) (r1)...  record / record 0 79       Check record train status
    vr             vr                            vr                         Check recognizer status
    getsig         getsig (r)                    getsig 0                   Get signature of record (r)
    sigtrain       sigtrain (r) (sig)            sigtrain 0 ZERO            Train one record(r) with signature(sig)
+   settings       settings                      settings                   Check current system settings
   ******************************************************************************
   * @section  HISTORY
     
@@ -45,11 +46,12 @@ void printCheckRecognizer(uint8_t *buf);
 void printUserGroup(uint8_t *buf, int len);
 void printCheckRecord(uint8_t *buf, int num);
 void printSigTrain(uint8_t *buf, uint8_t len);
+void printSystemSettings(uint8_t *buf, int len);
 
 /***************************************************************************/
 // command analyze part
 #define CMD_BUF_LEN      64+1
-#define CMD_NUM      8
+#define CMD_NUM     9
 typedef int (*cmd_function_t)(int, int);
 uint8_t cmd[CMD_BUF_LEN];
 uint8_t cmd_cnt;
@@ -68,7 +70,7 @@ int cmdClear(int len, int paraNum);
 int cmdRecord(int len, int paraNum);
 int cmdSigTrain(int len, int paraNum);
 int cmdGetSig(int len, int paraNum);
-
+int cmdSettings(int len, int paraNum);
 /** cmdList, cmdLen, cmdFunction has correspondence */
 const char cmdList[CMD_NUM][10] = {  // command list table
   {"train"},
@@ -78,6 +80,7 @@ const char cmdList[CMD_NUM][10] = {  // command list table
   {"record"},
   {"sigtrain"},
   {"getsig"},
+  {"Settings"},
   {"test"},
 };
 const char cmdLen[CMD_NUM]= {    // command length
@@ -88,6 +91,7 @@ const char cmdLen[CMD_NUM]= {    // command length
   6,  //  {"record"},
   8,  //  {"sigtrain"},
   6,  //  {"getsig"},
+  8,  //  {"Settings"},
   4,  //  {"test"}
 };
 cmd_function_t cmdFunction[CMD_NUM]={      // command handle fuction(function pointer table)
@@ -98,6 +102,7 @@ cmd_function_t cmdFunction[CMD_NUM]={      // command handle fuction(function po
   cmdRecord,
   cmdSigTrain,
   cmdGetSig,
+  cmdSettings,
   cmdTest,
 };
 
@@ -108,10 +113,14 @@ uint8_t records[7]; // save record
 
 void setup(void)
 {
+  myVR.begin(9600);
+  
   /** initialize */
   Serial.begin(115200);
-  Serial.println("Elechouse Voice Recognition V2 Module \"train\" sample.");
-
+  Serial.println(F("Elechouse Voice Recognition V2 Module \"train\" sample."));
+  
+  printSeperator();
+  
   cmd_cnt = 0;
 }
 
@@ -142,7 +151,9 @@ void loop(void)
           if( compareCMD(paraAddr, (uint8_t *)cmdList[i], paraLen) == 0 ){
             /** call command function */
             if( cmdFunction[i](len, paraNum) != 0){
-              Serial.println("Command Format Error!");
+              printSeperator();
+              Serial.println(F("Command Format Error!"));
+              printSeperator();
             }
             break;
           }
@@ -151,11 +162,15 @@ void loop(void)
       
       /** command is not supported*/
       if(i == CMD_NUM){ 
-          Serial.println("Unkonwn command");
+        printSeperator();
+        Serial.println(F("Unkonwn command"));
+        printSeperator();
       }
     }else{
       /** received command is invalid */
-      Serial.println("Command format error");
+      printSeperator();
+      Serial.println(F("Command format error"));
+      printSeperator();
     }
   }
   
@@ -218,8 +233,6 @@ int compareCMD(uint8_t *para1 , uint8_t *para2, int len)
   for(i=0; i<len; i++){
     res = para2[i] - para1[i];
     if(res != 0 && res != 0x20){
-      return -1;
-    }else{
       res = para1[i] - para2[i];
       if(res != 0 && res != 0x20){
         return -1;
@@ -326,13 +339,17 @@ int cmdTrain(int len, int paraNum)
       return -1;
     }
   }
+  printSeperator();
   ret = myVR.train(records, paraNum-1, buf);
 //  ret = myVR.train(records, paraNum-1);
   if(ret >= 0){
     printTrain(buf, ret);
-  }else{
-    Serial.println("Train failed.");
+  }else if(ret == -1){
+    Serial.println(F("Train failed."));
+  }else if(ret == -2){
+    Serial.println(F("Train Timeout."));
   }
+  printSeperator();
   return 0;
 }
 
@@ -363,7 +380,7 @@ int cmdLoad(int len, int paraNum)
   if(ret >= 0){
     printLoad(buf, ret);
   }else{
-    Serial.println("Load failed.");
+    Serial.println(F("Load failed."));
   }
   printSeperator();
   return 0;
@@ -383,7 +400,7 @@ int cmdClear(int len, int paraNum)
   }
   if(myVR.clear() == 0){
     printSeperator();
-    Serial.println("Recognizer cleared.");
+    Serial.println(F("Recognizer cleared."));
     printSeperator();
   }
   return 0;
@@ -427,7 +444,7 @@ int cmdRecord(int len, int paraNum)
       if(ret>=0){
         printCheckRecord(buf, ret);
       }else{
-        Serial.println("Check record failed.");
+        Serial.println(F("Check record failed."));
       }
   }else if(paraNum < 9){
     for(int i=2; i<=paraNum; i++){
@@ -439,12 +456,13 @@ int cmdRecord(int len, int paraNum)
     }
     
     ret = myVR.checkRecord(buf, records, paraNum-1);    // auto clean duplicate records
+    printSeperator();
     if(ret>=0){
-      printSeperator();
       printCheckRecord(buf, ret);
     }else{
-      Serial.println("Check record failed.");
+      Serial.println(F("Check record failed."));
     }
+    printSeperator();
   }else{
     return -1;
   }
@@ -476,14 +494,16 @@ int cmdSigTrain(int len, int paraNum)
   sig_len = findPara(len, paraNum, &lastAddr);
   sig_len +=( (unsigned int)lastAddr - (unsigned int)paraAddr );
   
-  
+  printSeperator();
   ret = myVR.trainWithSignature(records[0], paraAddr, sig_len, buf);
 //  ret = myVR.trainWithSignature(records, paraNum-1);
   if(ret >= 0){
     printSigTrain(buf, ret);
   }else{
-    Serial.println("Train failed.");
+    Serial.println(F("Train failed."));
   }
+  printSeperator();
+  
   return 0;
 }
 
@@ -508,15 +528,19 @@ int cmdGetSig(int len, int paraNum)
   }
   
   ret = myVR.checkSignature(records[0], buf);
+  
+  printSeperator();
   if(ret == 0){
-    Serial.println("Signature isn't set.");
+    Serial.println(F("Signature isn't set."));
   }else if(ret > 0){
-    Serial.print("Signature:");
+    Serial.print(F("Signature:"));
     printSignature(buf, ret);
     Serial.println();
   }else{
-    Serial.println("Get sig error.");
+    Serial.println(F("Get sig error."));
   }
+  printSeperator();
+  
   return 0;
 }
 
@@ -529,10 +553,26 @@ int cmdGetSig(int len, int paraNum)
 */
 int cmdTest(int len, int paraNum)
 {
-  Serial.println("TEST is not supported.");
+  printSeperator();
+  Serial.println(F("TEST is not supported."));
+  printSeperator();
   return 0;
 }
 
+int cmdSettings(int len, int paraNum)
+{
+  int ret;
+  if(paraNum != 1){
+    return -1;
+  }
+  ret = myVR.checkSystemSettings(buf);
+  if( ret > 0){
+    printSeperator();
+    printSystemSettings(buf, ret);
+    printSeperator();
+  }
+  return 0;
+}
 
 /*****************************************************************************/
 /**
@@ -549,9 +589,9 @@ void printSignature(uint8_t *buf, int len)
       Serial.write(buf[i]);
     }
     else{
-      Serial.print("[");
+      Serial.print(F("["));
       Serial.print(buf[i], HEX);
-      Serial.print("]");
+      Serial.print(F("]"));
     }
   }
 }
@@ -568,33 +608,33 @@ void printSignature(uint8_t *buf, int len)
 */
 void printVR(uint8_t *buf)
 {
-  Serial.println("VR Index\tGroup\tRecordNum\tSignature");
+  Serial.println(F("VR Index\tGroup\tRecordNum\tSignature"));
 
   Serial.print(buf[2], DEC);
-  Serial.print("\t\t");
+  Serial.print(F("\t\t"));
 
   if(buf[0] == 0xFF){
-    Serial.print("NONE");
+    Serial.print(F("NONE"));
   }
   else if(buf[0]&0x80){
-    Serial.print("UG ");
+    Serial.print(F("UG "));
     Serial.print(buf[0]&(~0x80), DEC);
   }
   else{
-    Serial.print("SG ");
+    Serial.print(F("SG "));
     Serial.print(buf[0], DEC);
   }
-  Serial.print("\t");
+  Serial.print(F("\t"));
 
   Serial.print(buf[1], DEC);
-  Serial.print("\t\t");
+  Serial.print(F("\t\t"));
   if(buf[3]>0){
     printSignature(buf+4, buf[3]);
   }
   else{
-    Serial.print("NONE");
+    Serial.print(F("NONE"));
   }
-  Serial.println("\r\n");
+  Serial.println(F("\r\n"));
 }
 
 /**
@@ -619,40 +659,40 @@ void printSeperator()
 */
 void printCheckRecognizer(uint8_t *buf)
 {
-  Serial.print("All voice records in recognizer: ");
+  Serial.print(F("All voice records in recognizer: "));
   Serial.println(buf[8], DEC);
-  Serial.print("Valid voice records in recognizer: ");
+  Serial.print(F("Valid voice records in recognizer: "));
   Serial.println(buf[0], DEC);
   if(buf[10] == 0xFF){
-    Serial.println("VR is not in group mode.");
+    Serial.println(F("VR is not in group mode."));
   }
   else if(buf[10]&0x80){
-    Serial.print("VR is in user group mode:");
+    Serial.print(F("VR is in user group mode:"));
     Serial.println(buf[10]&0x7F, DEC);
   }
   else{
-    Serial.print("VR is in system group mode:");
+    Serial.print(F("VR is in system group mode:"));
     Serial.println(buf[10], DEC);
   }
-  Serial.println("VR Index\tRecord\t\tComment");
+  Serial.println(F("VR Index\tRecord\t\tComment"));
   for(int i=0; i<7; i++){
     Serial.print(i, DEC);
-    Serial.print("\t\t");
+    Serial.print(F("\t\t"));
     if(buf[i+1] == 0xFF){
       if(buf[10] == 0xFF){
-        Serial.print("Unloaded\tNONE");
+        Serial.print(F("Unloaded\tNONE"));
       }else{
-        Serial.print("Not Set\t\tNONE");
+        Serial.print(F("Not Set\t\tNONE"));
       }
     }
     else{
       Serial.print(buf[i+1], DEC);
-      Serial.print("\t\t");
+      Serial.print(F("\t\t"));
       if(buf[9]&(1<<i)){
-        Serial.print("Valid");
+        Serial.print(F("Valid"));
       }
       else{
-        Serial.print("Untrained");
+        Serial.print(F("Untrained"));
       }
     }
 
@@ -671,33 +711,33 @@ void printCheckRecognizer(uint8_t *buf)
 */
 void printCheckRecord(uint8_t *buf, int num)
 {
-  Serial.print("Check ");
+  Serial.print(F("Check "));
   Serial.print(buf[0], DEC);
-  Serial.println(" records.");
+  Serial.println(F(" records."));
 
   Serial.print(num, DEC);
   if(num>1){
-    Serial.println(" records trained.");
+    Serial.println(F(" records trained."));
   }
   else{
-    Serial.println(" record trained.");
+    Serial.println(F(" record trained."));
   }
 
   for(int i=0; i<buf[0]*2; i += 2){
     Serial.print(buf[i+1], DEC);
-    Serial.print("\t-->\t");
+    Serial.print(F("\t-->\t"));
     switch(buf[i+2]){
       case 0x01:
-        Serial.print("Trained");
+        Serial.print(F("Trained"));
         break;
       case 0x00:
-        Serial.print("Untrained");
+        Serial.print(F("Untrained"));
         break;
       case 0xFF:
-        Serial.print("Record value out of range");
+        Serial.print(F("Record value out of range"));
         break;
       default:
-        Serial.print("Unknown Stauts");
+        Serial.print(F("Unknown Stauts"));
         break;
     }
     Serial.println();
@@ -719,16 +759,16 @@ void printCheckRecord(uint8_t *buf, int num)
 void printUserGroup(uint8_t *buf, int len)
 {
   int i, j;
-  Serial.println("Check User Group:");
+  Serial.println(F("Check User Group:"));
   for(i=0; i<len; i++){
-    Serial.print("Group:");
+    Serial.print(F("Group:"));
     Serial.println(buf[8*i]);
     for(j=0; j<7; j++){
       if(buf[8*i+1+j] == 0xFF){
-        Serial.print("NONE\t");
+        Serial.print(F("NONE\t"));
       }else{
         Serial.print(buf[8*i+1+j], DEC);
-        Serial.print("\t");
+        Serial.print(F("\t"));
       }
     }
     Serial.println();
@@ -752,34 +792,34 @@ void printUserGroup(uint8_t *buf, int len)
 void printLoad(uint8_t *buf, uint8_t len)
 {
   if(len == 0){
-    Serial.println("Load Successfully.");
+    Serial.println(F("Load Successfully."));
     return;
   }else{
-    Serial.print("Load success: ");
+    Serial.print(F("Load success: "));
     Serial.println(buf[0], DEC);
   }
   for(int i=0; i<len-1; i += 2){
-    Serial.print("Record ");
+    Serial.print(F("Record "));
     Serial.print(buf[i+1], DEC);
-    Serial.print("\t");
+    Serial.print(F("\t"));
     switch(buf[i+2]){
       case 0:
-        Serial.println("Loaded");
+        Serial.println(F("Loaded"));
         break;
       case 0xFC:
-        Serial.println("Record already in recognizer");
+        Serial.println(F("Record already in recognizer"));
         break;
       case 0xFD:
-        Serial.println("Recognizer full");
+        Serial.println(F("Recognizer full"));
         break;
       case 0xFE:
-        Serial.println("Record untrained");
+        Serial.println(F("Record untrained"));
         break;
       case 0xFF:
-        Serial.println("Value out of range");
+        Serial.println(F("Value out of range"));
         break;
       default:
-        Serial.println("Unknown status");
+        Serial.println(F("Unknown status"));
         break;
     }
   }
@@ -800,28 +840,28 @@ void printLoad(uint8_t *buf, uint8_t len)
 void printTrain(uint8_t *buf, uint8_t len)
 {
   if(len == 0){
-    Serial.println("Train Finish.");
+    Serial.println(F("Train Finish."));
     return;
   }else{
-    Serial.print("Train success: ");
+    Serial.print(F("Train success: "));
     Serial.println(buf[0], DEC);
   }
   for(int i=0; i<len-1; i += 2){
-    Serial.print("Record ");
+    Serial.print(F("Record "));
     Serial.print(buf[i+1], DEC);
-    Serial.print("\t");
+    Serial.print(F("\t"));
     switch(buf[i+2]){
       case 0:
-        Serial.println("Trained");
+        Serial.println(F("Trained"));
         break;
       case 0xFE:
-        Serial.println("Train Time Out");
+        Serial.println(F("Train Time Out"));
         break;
       case 0xFF:
-        Serial.println("Value out of range");
+        Serial.println(F("Value out of range"));
         break;
       default:
-        Serial.print("Unknown status ");
+        Serial.print(F("Unknown status "));
         Serial.println(buf[i+2], HEX);
         break;
     }
@@ -844,34 +884,114 @@ void printTrain(uint8_t *buf, uint8_t len)
 void printSigTrain(uint8_t *buf, uint8_t len)
 {
   if(len == 0){
-    Serial.println("Train With Signature Finish.");
+    Serial.println(F("Train With Signature Finish."));
     return;
   }else{
-    Serial.print("Success: ");
+    Serial.print(F("Success: "));
     Serial.println(buf[0], DEC);
   }
-  Serial.print("Record ");
+  Serial.print(F("Record "));
   Serial.print(buf[1], DEC);
-  Serial.print("\t");
+  Serial.print(F("\t"));
   switch(buf[2]){
     case 0:
-      Serial.println("Trained");
+      Serial.println(F("Trained"));
       break;
     case 0xF0:
-      Serial.println("Trained, signature truncate");
+      Serial.println(F("Trained, signature truncate"));
       break;
     case 0xFE:
-      Serial.println("Train Time Out");
+      Serial.println(F("Train Time Out"));
       break;
     case 0xFF:
-      Serial.println("Value out of range");
+      Serial.println(F("Value out of range"));
       break;
     default:
-      Serial.print("Unknown status ");
+      Serial.print(F("Unknown status "));
       Serial.println(buf[2], HEX);
       break;
   }
-  Serial.print("SIG: ");
+  Serial.print(F("SIG: "));
   Serial.write(buf+3, len-3);
   Serial.println();
+}
+
+const unsigned int io_pw_tab[16]={
+  10,  15,  20,  25,  30,  35,  40,  45, 
+  50,  75,  100, 200, 300, 400, 500, 1000
+};
+
+void printSystemSettings(uint8_t *buf, int len)
+{
+  
+  switch(buf[0]){
+    case 0:
+    case 3:
+      Serial.println(F("Baud rate: 9600"));
+      break;
+    case 1:
+      Serial.println(F("Baud rate: 2400"));
+      break;
+    case 2:
+      Serial.println(F("Baud rate: 4800"));
+      break;
+    case 4:
+      Serial.println(F("Baud rate: 19200"));
+      break;
+    case 5:
+      Serial.println(F("Baud rate: 38400"));
+      break;
+    default:
+      Serial.println(F("Baud rate: UNKONOWN"));
+      break;
+  }
+  
+  switch(buf[1]){
+    case 0:
+    case 0xFF:
+      Serial.println(F("Outpu IO Mode: Pulse"));
+      break;
+    case 1:
+      Serial.println(F("Outpu IO Mode: Toggle"));
+      break;
+    case 2:
+      Serial.println(F("Outpu IO Mode: Clear(When recognized) "));
+      break;
+    case 3:
+      Serial.println(F("Outpu IO Mode: Set(When recognized)"));
+      break;
+    default:
+      Serial.println(F("Output IO Mode: UNKONOWN"));
+      break;
+  }
+  
+  if(buf[2] > 15){
+    Serial.println(F("Pulse width: UNKONOWN"));
+  }else{
+    Serial.print(F("Pulse Width: "));
+    Serial.print(io_pw_tab[buf[2]], DEC);
+    Serial.println(F("ms"));
+  }
+  
+  if(buf[3] == 0 || buf[3] == 0xFF){
+    Serial.println(F("Auto Load: disable"));
+  }else{
+    Serial.println(F("Auto Load: enable"));
+  }
+  
+  switch(buf[4]){
+    case 0:
+    case 0xFF:
+      Serial.println(F("Group control by external IO: disabled"));
+      break;
+    case 1:
+      Serial.println(F("Group control by external IO: system group selected"));
+      break;
+    case 2:
+      Serial.println(F("Group control by external IO: user group selected"));
+      break;
+    default:
+      Serial.println(F("Group control by external IO: UNKNOWN STATUS"));
+      break;
+  }
 }
