@@ -93,7 +93,7 @@ int VR :: train(uint8_t *records, uint8_t len, uint8_t *buf)
 			}
 			start_millis = millis();
 		}
-		if(millis()-start_millis > 4000){
+		if(millis()-start_millis > 8000){
 			return -2;
 		}
 	}
@@ -145,7 +145,7 @@ int VR :: trainWithSignature(uint8_t record, const void *buf, uint8_t len, uint8
 			}
 			start_millis = millis();
 		}
-		if(millis()-start_millis > 4000){
+		if(millis()-start_millis > 8000){
 			return -2;
 		}
 	}
@@ -507,6 +507,44 @@ int VR :: loadUserGroup(uint8_t grp, uint8_t *buf)
 		return 1;
 	}
 	
+	return 0;
+}
+
+int VR :: restoreSystemSettings()
+{
+	int len;
+	send_pkt(FRAME_CMD_RESET_DEFAULT, 0, 0);
+	len = receive_pkt(vr_buf);
+	if(len<=0){
+		return -1;
+	}
+
+	if(vr_buf[2] != FRAME_CMD_RESET_DEFAULT){
+		return -1;
+	}
+
+	return 0;
+}
+
+int VR :: checkSystemSettings(uint8_t* buf)
+{
+	int len;
+	if(buf == 0){
+		return -1;
+	}
+	send_pkt(FRAME_CMD_CHECK_SYSTEM, 0, 0);
+	len = receive_pkt(vr_buf);
+	if(len<=0){
+		return -1;
+	}
+	
+	if(vr_buf[2] != FRAME_CMD_CHECK_SYSTEM){
+		return -1;
+	}
+
+	memcpy(buf, vr_buf+4, vr_buf[1]-3);
+	return vr_buf[1]-3;
+
 	return 0;
 }
 

@@ -57,28 +57,25 @@
 #define FRAME_END							(0x0A)
 
 /***************************************************************************/
-#define FRAME_CMD_SYS_STATUS				(0x00)
+#define FRAME_CMD_CHECK_SYSTEM				(0x00)
 #define FRAME_CMD_CHECK_TRAIN				(0x01)
 #define FRAME_CMD_CHECK_SIG					(0x14)
 #define FRAME_CMD_CHECK_BSR					(0x16)
 
 #define FRAME_CMD_SET_BR					(0x03)	//baud rate
 #define FRAME_CMD_SET_IOM					(0x04)	//IO mode
-#define FRAME_CMD_RESET_IO					(0x17)	// reset IO OUTPUT
 #define FRAME_CMD_SET_PW					(0x05)	//pulse width
+#define FRAME_CMD_RESET_IO					(0x17)	// reset IO OUTPUT
 #define FRAME_CMD_SET_AL					(0x07)	// Auto load
-#define FRAME_CMD_RESET						(0x06)	//reset configuration
+#define FRAME_CMD_RESET_DEFAULT				(0x06)	//reset configuration
 
 #define FRAME_CMD_TRAIN						(0x02)
 #define FRAME_CMD_SIG_TRAIN					(0x13)
 #define FRAME_CMD_SET_SIG					(0x0E)
-#define FRAME_CMD_DELETE					(0x0B)
 
 #define FRAME_CMD_START						(0x0F)
 #define FRAME_CMD_LOAD						(0x10)	//Load N records
 #define FRAME_CMD_CLEAR						(0x12)	//Clear BSR buffer
-#define FRAME_CMD_LSGRP						(0x08)	//Load system group
-#define FRAME_CMD_LUGRP						(0x09)	//Load user defined group
 #define FRAME_CMD_GROUP						(0x15)  //
 	#define FRAME_CMD_GROUP_SET							(0x00)  //
 	#define FRAME_CMD_GROUP_SUGRP						(0x01)  //
@@ -158,7 +155,8 @@ public:
 	int resetIO(uint8_t *ios=0, uint8_t len=1);
 	int setPulseWidth(uint8_t level);
 	int setAutoLoad(uint8_t *records=0, uint8_t len = 0);
-	
+	int restoreSystemSettings();
+	int checkSystemSettings(uint8_t* buf);
 	int recognize(uint8_t *buf, int timeout = VR_DEFAULT_TIMEOUT);
 	
 	int train(uint8_t *records, uint8_t len=1, uint8_t *buf = 0);
@@ -179,7 +177,6 @@ public:
 	int checkUserGroup(uint8_t grp, uint8_t *buf);
 	int loadSystemGroup(uint8_t grp, uint8_t *buf=0);
 	int loadUserGroup(uint8_t grp, uint8_t *buf=0);
-	
 	
 	int test(uint8_t cmd, uint8_t *bsr);
 	
