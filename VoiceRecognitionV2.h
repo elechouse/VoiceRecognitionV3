@@ -188,6 +188,7 @@ public:
 	void cpy(char *buf,  char * pbuf);
 	void sort(uint8_t *buf, int len);
 	int cleanDup(uint8_t *des, uint8_t *buf, int len);
+	void send_pkt(uint8_t *buf, uint8_t len);
 	void send_pkt(uint8_t cmd, uint8_t *buf, uint8_t len);
 	void send_pkt(uint8_t cmd, uint8_t subcmd, uint8_t *buf, uint8_t len);
 	int receive(uint8_t *buf, int len, uint16_t timeout = VR_DEFAULT_TIMEOUT);

@@ -829,6 +829,9 @@ int VR :: writehex(uint8_t *buf, uint8_t len)
 
 void VR :: send_pkt(uint8_t cmd, uint8_t subcmd, uint8_t *buf, uint8_t len)
 {
+	while(available()){
+		flush();
+	}
 	write(FRAME_HEAD);
 	write(len+3);
 	write(cmd);
@@ -845,6 +848,17 @@ void VR :: send_pkt(uint8_t cmd, uint8_t *buf, uint8_t len)
 	write(FRAME_HEAD);
 	write(len+2);
 	write(cmd);
+	write(buf, len);
+	write(FRAME_END);
+}
+
+void VR :: send_pkt(uint8_t *buf, uint8_t len)
+{
+	while(available()){
+		flush();
+	}
+	write(FRAME_HEAD);
+	write(len+1);
 	write(buf, len);
 	write(FRAME_END);
 }
