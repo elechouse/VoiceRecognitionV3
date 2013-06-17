@@ -103,7 +103,7 @@ Length = L(Length + Command + Status +Data)
 
 ---
 ***CHECK***  
-**00** --> [Check System Settings](#cmd00)  
+**00** --> [Check System Settings](#check-system-settings-00)  
 **01** --> Check Recognizer  
 **02** --> Check Record Train Status  
 **03** --> Check Signature of One Record
@@ -136,7 +136,7 @@ Length = L(Length + Command + Status +Data)
 **FF** --> Error  
 
 ### Details
-#### <a id="cmd00">Check System Settings (00)</a>
+#### Check System Settings (00)
 #### Check Recognizer (01)
 #### Check Record Train Status (02)
 #### Check Signature of One Record (03)
