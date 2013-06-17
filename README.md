@@ -140,57 +140,57 @@ Length = L(Length + Command + Status +Data)
 [id00]: #check-system-settings-00
 #### Check System Settings (00)
 
-[id01]: check-recognizer-01
+[id01]: #check-recognizer-01
 #### Check Recognizer (01)
 
-[id02]: check-record-train-status-02
+[id02]: #check-record-train-status-02
 #### Check Record Train Status (02)
 
-[id03]: check-signature-of-one-record-03
+[id03]: #check-signature-of-one-record-03
 #### Check Signature of One Record (03)
-[id10]: restore-system-settings-10
+[id10]: #restore-system-settings-10
 #### Restore System Settings (10)
 
-[id11]: set-baud-rate-11
+[id11]: #set-baud-rate-11
 #### Set Baud Rate (11)
 
-[id12]: set-output-io-mode-12
+[id12]: #set-output-io-mode-12
 #### Set Output IO Mode (12)
 
-[id13]: set-output-io-pulse-width-13
+[id13]: #set-output-io-pulse-width-13
 #### Set Output IO Pulse Width (13)
 
-[id14]: reset-output-io-14
+[id14]: #reset-output-io-14
 #### Reset Output IO (14)
 
-[id15]: set-power-on-auto-load-15
+[id15]: #set-power-on-auto-load-15
 #### Set Power On Auto Load (15)
 
-[id20]: train-one-record-or-records-20
+[id20]: #train-one-record-or-records-20
 #### Train One Record or Records (20)
 
-[id21]: train-one-record-and-set-signature-21
+[id21]: #train-one-record-and-set-signature-21
 #### Train One Record and Set Signature (21)
 
-[id22]: set-signature-for-record-22
+[id22]: #set-signature-for-record-22
 #### Set Signature for Record (22)
 
-[id30]: load-a-record-or-records-to-recognizer-30
+[id30]: #load-a-record-or-records-to-recognizer-30
 #### Load a Record or Records to Recognizer (30)
 
-[id31]: clear-recognizer-31
+[id31]: #clear-recognizer-31
 #### Clear Recognizer (31)
 
-[id32]: group-control-32
+[id32]: #group-control-32
 #### Group Control (32)
 
-[id0a]: prompt-0a
+[id0a]: #prompt-0a
 #### Prompt (0A)
 
-[id0d]: voice-recognized-0d
+[id0d]: #voice-recognized-0d
 #### Voice Recognized (0D)
 
-[idff]: error-ff
+[idff]: #error-ff
 #### Error (FF)
 
 
