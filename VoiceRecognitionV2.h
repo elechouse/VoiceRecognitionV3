@@ -58,39 +58,38 @@
 
 /***************************************************************************/
 #define FRAME_CMD_CHECK_SYSTEM				(0x00)
-#define FRAME_CMD_CHECK_TRAIN				(0x01)
-#define FRAME_CMD_CHECK_SIG					(0x14)
-#define FRAME_CMD_CHECK_BSR					(0x16)
+#define FRAME_CMD_CHECK_BSR					(0x01)
+#define FRAME_CMD_CHECK_TRAIN				(0x02)
+#define FRAME_CMD_CHECK_SIG					(0x03)
 
-#define FRAME_CMD_SET_BR					(0x03)	//baud rate
-#define FRAME_CMD_SET_IOM					(0x04)	//IO mode
-#define FRAME_CMD_SET_PW					(0x05)	//pulse width
-#define FRAME_CMD_RESET_IO					(0x17)	// reset IO OUTPUT
-#define FRAME_CMD_SET_AL					(0x07)	// Auto load
-#define FRAME_CMD_RESET_DEFAULT				(0x06)	//reset configuration
+#define FRAME_CMD_RESET_DEFAULT				(0x10)	//reset configuration
+#define FRAME_CMD_SET_BR					(0x11)	//baud rate
+#define FRAME_CMD_SET_IOM					(0x12)	//IO mode
+#define FRAME_CMD_SET_PW					(0x13)	//pulse width
+#define FRAME_CMD_RESET_IO					(0x14)	// reset IO OUTPUT					
+#define FRAME_CMD_SET_AL					(0x15)	// Auto load
 
-#define FRAME_CMD_TRAIN						(0x02)
-#define FRAME_CMD_SIG_TRAIN					(0x13)
-#define FRAME_CMD_SET_SIG					(0x0E)
+#define FRAME_CMD_TRAIN						(0x20)
+#define FRAME_CMD_SIG_TRAIN					(0x21)
+#define FRAME_CMD_SET_SIG					(0x22)
 
-#define FRAME_CMD_START						(0x0F)
-#define FRAME_CMD_LOAD						(0x10)	//Load N records
-#define FRAME_CMD_CLEAR						(0x12)	//Clear BSR buffer
-#define FRAME_CMD_GROUP						(0x15)  //
+#define FRAME_CMD_LOAD						(0x30)	//Load N records
+#define FRAME_CMD_CLEAR						(0x31)	//Clear BSR buffer					
+#define FRAME_CMD_GROUP						(0x32)  //
 	#define FRAME_CMD_GROUP_SET							(0x00)  //
 	#define FRAME_CMD_GROUP_SUGRP						(0x01)  //
 	#define FRAME_CMD_GROUP_LSGRP						(0x02)  //
 	#define FRAME_CMD_GROUP_LUGRP						(0x03)  //
 	#define FRAME_CMD_GROUP_CUGRP						(0x04)  //
 
-#define FRAME_CMD_TEST						(0x0C)
+#define FRAME_CMD_TEST						(0xEE)
 	#define FRAME_CMD_TEST_READ							(0x01)	
 	#define FRAME_CMD_TEST_WRITE						(0x00)	
 
-#define FRAME_CMD_VR						(0x0D)	//Voice recognized
 
+#define FRAME_CMD_VR						(0x0D)	//Voice recognized
 #define FRAME_CMD_PROMPT					(0x0A)
-#define FRAME_CMD_ERROR						(0x11)
+#define FRAME_CMD_ERROR						(0xFF)
 
 /***************************************************************************/
 #define FRAME_ERR_UDCMD						(0x00)

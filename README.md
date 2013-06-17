@@ -64,18 +64,76 @@
 ![cmd](./image/train_command.jpg)
 
 ### Application
-#### Control LED
+
+#### Control LED Sample
 1. Open **vr\_sample\_control\_led**(File -> Examples -> VoiceRecognitionV2 -> vr\_sample\_control\_led)
 1. Choose right Arduino board(Tool -> Board, UNO recommended), Choose right serial port.
 1. Click **Upload** button, wait until Arduino is uploaded.
 1. Open **Serial Monitor**. Set baud rate 115200.
 1. Say your trained voice to control the LED on Arduino UNO board. When record 0 is recognized, the led turns on. When record 1 is recognized, the led turns off.
+![control_led](./image/control_led.jpg)
 1. Control led finish.
+
+### Multi Command sample
+
 
 
 ## Protocol
 The simplest way to play the Voice Recognition V2 module is to use this VoiceRecognition Arduino library. But for many **hackers**, this is far from enough, so we supply this protocol by which user can communicate with the Voice Recognition V2 module.
 
+### Frame Format
+
+#### Control
+**| Head (0AAH) | Length| Command | Data | End (0AH) |**  
+Length = L(Length + Command + Data)
+
+#### Return
+**| Head (0AAH) | Length| Command | Data | End (0AH) |**  
+Length = L(Length + Command + Status +Data)
+
+
+### Code
+
+***ALL CODE ARE HEXADECIMAL***
+
+---  
+***FRAME CODE***  
+**AA** --> Frame Head  
+**0A** --> Frame End  
+
+---
+***CHECK***  
+**00** --> Check System Settings  
+**01** --> Check Recognizer  
+**02** --> Check Record Train Status  
+**03** --> Check Signature of One Record
+
+---
+***SYSTEM SETTINGS***  
+**10** --> Restore System Settings  
+**11** --> Set Baud Rate  
+**12** --> Set Output IO Mode  
+**13** --> Set Output IO Pulse Width   
+**14** --> Reset Output IO  
+**15** --> Set Power On Auto Load   
+
+---
+***RECORD OPERATION***  
+**20** --> Train One Record or Records  
+**21** --> Train One Record and Set Signature  
+**22** --> Set Signature for Record  
+
+---
+***RECOGNIZER CONTROL***  
+**30** --> Load a Record or Records to **Recognizer**  
+**31** --> Clear **Recognizer**  
+**32** --> Group Control
+
+---
+***THESE 3 COMMANDS ARE ONLY USED FOR RETURN MESSAGE***  
+**0A** --> Prompt  
+**0D** --> Voice recognized  
+**FF** --> Error  
 
 
 ## **Buy** ##
