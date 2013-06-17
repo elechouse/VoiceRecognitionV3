@@ -70,7 +70,7 @@
 1. Choose right Arduino board(Tool -> Board, UNO recommended), Choose right serial port.
 1. Click **Upload** button, wait until Arduino is uploaded.
 1. Open **Serial Monitor**. Set baud rate 115200.
-1. Say your trained voice to control the LED on Arduino UNO board. When record 0 is recognized, the led turns on. When record 1 is recognized, the led turns off.
+1. Say your trained voice to control the LED on Arduino UNO board. When record 0 is recognized, the led turns on. When record 1 is recognized, the led turns off.  
 ![control_led](./image/control_led.jpg)
 1. Control led finish.
 
@@ -103,7 +103,7 @@ Length = L(Length + Command + Status +Data)
 
 ---
 ***CHECK***  
-**00** --> Check System Settings  
+**00** --> [Check System Settings](#cmd00)  
 **01** --> Check Recognizer  
 **02** --> Check Record Train Status  
 **03** --> Check Signature of One Record
@@ -134,6 +134,29 @@ Length = L(Length + Command + Status +Data)
 **0A** --> Prompt  
 **0D** --> Voice recognized  
 **FF** --> Error  
+
+### Details
+#### <a id="cmd00">Check System Settings (00)</a>
+#### Check Recognizer (01)
+#### Check Record Train Status (02)
+#### Check Signature of One Record (03)
+#### Restore System Settings (10)
+#### Set Baud Rate (11)
+#### Set Output IO Mode (12)
+#### Set Output IO Pulse Width (13)
+#### Reset Output IO (14)
+#### Set Power On Auto Load (15)
+#### Train One Record or Records (20)
+#### Train One Record and Set Signature (21)
+#### 
+#### 
+#### 
+#### 
+#### 
+#### 
+#### 
+#### 
+
 
 
 ## **Buy** ##
