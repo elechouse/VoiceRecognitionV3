@@ -103,59 +103,96 @@ Length = L(Length + Command + Status +Data)
 
 ---
 ***CHECK***  
-**00** --> [Check System Settings](#check-system-settings-00)  
-**01** --> Check Recognizer  
-**02** --> Check Record Train Status  
-**03** --> Check Signature of One Record
+**00** --> [Check System Settings][id00]  
+**01** --> [Check Recognizer][id01]  
+**02** --> [Check Record Train Status][id02]  
+**03** --> [Check Signature of One Record][id03]
 
 ---
 ***SYSTEM SETTINGS***  
-**10** --> Restore System Settings  
-**11** --> Set Baud Rate  
-**12** --> Set Output IO Mode  
-**13** --> Set Output IO Pulse Width   
-**14** --> Reset Output IO  
-**15** --> Set Power On Auto Load   
+**10** --> [Restore System Settings][id10]  
+**11** --> [Set Baud Rate][id11]  
+**12** --> [Set Output IO Mode][id12]  
+**13** --> [Set Output IO Pulse Width][id13]   
+**14** --> [Reset Output IO][id14]  
+**15** --> [Set Power On Auto Load][id15]   
 
 ---
 ***RECORD OPERATION***  
-**20** --> Train One Record or Records  
-**21** --> Train One Record and Set Signature  
-**22** --> Set Signature for Record  
+**20** --> [Train One Record or Records][id20]  
+**21** --> [Train One Record and Set Signature][id21]  
+**22** --> [Set Signature for Record][id22]  
 
 ---
 ***RECOGNIZER CONTROL***  
-**30** --> Load a Record or Records to **Recognizer**  
-**31** --> Clear **Recognizer**  
-**32** --> Group Control
+**30** --> [Load a Record or Records to Recognizer][id30]  
+**31** --> [Clear Recognizer][id31]  
+**32** --> [Group Control][id32]
 
 ---
 ***THESE 3 COMMANDS ARE ONLY USED FOR RETURN MESSAGE***  
-**0A** --> Prompt  
-**0D** --> Voice recognized  
-**FF** --> Error  
+**0A** --> [Prompt][id0a]  
+**0D** --> [Voice Recognized][id0d]  
+**FF** --> [Error][idff]  
 
 ### Details
+
+[id00]: #check-system-settings-00
 #### Check System Settings (00)
+
+[id01]: check-recognizer-01
 #### Check Recognizer (01)
+
+[id02]: check-record-train-status-02
 #### Check Record Train Status (02)
+
+[id03]: check-signature-of-one-record-03
 #### Check Signature of One Record (03)
+[id10]: restore-system-settings-10
 #### Restore System Settings (10)
+
+[id11]: set-baud-rate-11
 #### Set Baud Rate (11)
+
+[id12]: set-output-io-mode-12
 #### Set Output IO Mode (12)
+
+[id13]: set-output-io-pulse-width-13
 #### Set Output IO Pulse Width (13)
+
+[id14]: reset-output-io-14
 #### Reset Output IO (14)
+
+[id15]: set-power-on-auto-load-15
 #### Set Power On Auto Load (15)
+
+[id20]: train-one-record-or-records-20
 #### Train One Record or Records (20)
+
+[id21]: train-one-record-and-set-signature-21
 #### Train One Record and Set Signature (21)
-#### 
-#### 
-#### 
-#### 
-#### 
-#### 
-#### 
-#### 
+
+[id22]: set-signature-for-record-22
+#### Set Signature for Record (22)
+
+[id30]: load-a-record-or-records-to-recognizer-30
+#### Load a Record or Records to Recognizer (30)
+
+[id31]: clear-recognizer-31
+#### Clear Recognizer (31)
+
+[id32]: group-control-32
+#### Group Control (32)
+
+[id0a]: prompt-0a
+#### Prompt (0A)
+
+[id0d]: voice-recognized-0d
+#### Voice Recognized (0D)
+
+[idff]: error-ff
+#### Error (FF)
+
 
 
 
