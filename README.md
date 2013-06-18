@@ -9,18 +9,16 @@
 - Signature function, help to make out voice record
 - LED indicate
 
+## Introduce
 
 ## Terminology
-- **record** -- voice command
-- **recognizer** -- 
-- **recognizer index**
-- **train**
-- **load**
-- **signature**
-- **group**
-
-
-## Introduce
+- **recognizer** -- core part of voice recognition module
+- **recognizer index** -- Each VoiceRecognitionModule support 7 voice command, recognizer has 7 region for each voice command, one index corresponds to one region
+- **train** -- let VoiceRecognitionModule record your voice command
+- **load** -- copy trained voice to recognizer of VoiceRecognitionModule
+- **record** -- the trained voice command store in flash, number from 0 to 79
+- **signature** -- alias for **record**
+- **group** -- help to manage records, each group 7 **records**. System group and user group are supported.
 
 ## Quick Start
 
@@ -73,6 +71,13 @@
 1. Say your trained voice to control the LED on Arduino UNO board. When record 0 is recognized, the led turns on. When record 1 is recognized, the led turns off.  
 ![control_led](./image/control_led.jpg)
 1. Control led finish.
+
+## Samples
+### Train
+
+### Serial
+
+### Control LED
 
 ### Multi Command sample
 
