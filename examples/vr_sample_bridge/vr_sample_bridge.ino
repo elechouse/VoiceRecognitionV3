@@ -45,8 +45,8 @@ void setup(void)
   
   /** initialize */
   Serial.begin(115200);
-  Serial.println(F("Elechouse Voice Recognition V2 Module \"train\" sample."));
-
+  Serial.println(F("Elechouse Voice Recognition V2 Module \"bridge\" sample."));
+  Serial.println(F("Eg:\r\n1. Enable Arduino Serial monitor \"Send with newline\" feture, Baud rate 115200.\r\n2. Input \"01\" to \"check recognizer\".\r\n3. input \"31\" to \"clear recognizer\"\r\n4. input \"30 00 02 04\" to \"load record 0, record 2, record 4\""));
 }
 
 void loop(void)
