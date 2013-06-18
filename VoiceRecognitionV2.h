@@ -92,14 +92,14 @@
 #define FRAME_CMD_ERROR						(0xFF)
 
 /***************************************************************************/
-#define FRAME_ERR_UDCMD						(0x00)
-#define FRAME_ERR_LEN						(0x01)
-#define FRAME_ERR_DATA						(0x02)
-#define FRAME_ERR_SUBCMD					(0x03)
+// #define FRAME_ERR_UDCMD						(0x00)
+// #define FRAME_ERR_LEN						(0x01)
+// #define FRAME_ERR_DATA						(0x02)
+// #define FRAME_ERR_SUBCMD					(0x03)
 
-//#define FRAME_ERR_
-#define FRAME_STA_SUCCESS					(0x00)
-#define FRAME_STA_FAILED					(0xFF)
+// //#define FRAME_ERR_
+// #define FRAME_STA_SUCCESS					(0x00)
+// #define FRAME_STA_FAILED					(0xFF)
 /***************************************************************************/
 
 
