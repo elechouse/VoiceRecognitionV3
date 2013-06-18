@@ -30,6 +30,7 @@
 + Voice Recognition V2 library([Download zip file][dzip])
 + [Access Port][accessport]
 
+[idtrain]: #train
 ### Train
 1. Connect your Voice Recognition V2 Module with Arduino, By Default:  
 ![connection](./image/connection.jpg)
@@ -62,7 +63,7 @@
 ![cmd](./image/train_command.jpg)
 
 ### Application
-
+[controlled]: #control-led-sample
 #### Control LED Sample
 1. Open **vr\_sample\_control\_led**(File -> Examples -> VoiceRecognitionV2 -> vr\_sample\_control\_led)
 1. Choose right Arduino board(Tool -> Board, UNO recommended), Choose right serial port.
@@ -72,17 +73,35 @@
 ![control_led](./image/control_led.jpg)
 1. Control led finish.
 
-## Samples
-### Train
+## Examples
+### vr\_sample\_train
+See [Train][idtrain] for more information.
 
-### Serial
+### vr\_sample\_control\_led
+See [Control LED][controlled] for more information.
 
-### Control LED
+### vr\_sample\_bridge
+Use this sample to know the command of VoiceRecognition Module. Details about command, see [Protocol][Protocol] . You must do not input **Frame Head**, **Frame Length**, **Frame End**, only need input **Frame Command** and **Frame Data**. For example, Check Recognizer Command is "AA 02 01 0A" for all, here you only need input 01.
 
-### Multi Command sample
+Example:
+
+1. Enable Arduino Serial monitor "Send with newline" feture, Baud rate 115200.
+2. Input "01" to "check recognizer".
+3. input "31" to "clear recognizer"
+4. input "30 00 02 04" to "load record 0, record 2, record 4"
+
+![bridge](./image/bridge-0.jpg)
+![bridge](./image/bridge-1.jpg)
+
+### vr\_sample\_multi\_cmd
+This sample shows how to use multi commands(Break 7 voice command limits),this sample use **RECORD 0** to switch between the 2 command 'groups'(not Voice Recognition Group Function), first group is made up of *record 0, 1, 2, 3, 4, 5, 6,** and second group is made up of **record 0, 7, 8, 9, 10, 11, 12** .
+
+***Note: Before start this sample, you need train your Voice Recognition module first, and make sure that all records from 0 to 12 should be trained.***
+
+![bridge](./image/multi-cmd-0.jpg)
 
 
-
+[Protocol]: #protocol
 ## Protocol
 The simplest way to play the Voice Recognition V2 module is to use this VoiceRecognition Arduino library. But for many **hackers**, this is far from enough, so we supply this protocol by which user can communicate with the Voice Recognition V2 module.
 
@@ -409,7 +428,9 @@ Error command is only used for Voice Recognition Module to return error status.
 NONE  
 **Return:**  
 | AA | 03 | FF | ECODE | 0A |  
-ECODE: error code (FF-command undefined FE-command length error FD-data error FC-subcommand error FB-command usage error)
+
+**ECODE**: error code (FF-command undefined FE-command length error FD-data error FC-subcommand error FB-command usage error)
+
 [Back to index][index]
 
 
