@@ -164,6 +164,7 @@ NOTE: Data area is different with different with commands.
 
 [id00]: #check-system-settings-00
 #### Check System Settings (00)
+Use "Check System Settings" command to check current settings of Voice Recognition Module, include serial baud rate, output IO mode, output IO pulse width, auto load and group function.  
 **Format:**  
 | AA | 02 | 00 | 0A |  
 **Return:**  
@@ -177,6 +178,7 @@ NOTE: Data area is different with different with commands.
 [Back to index][index]
 [id01]: #check-recognizer-01
 #### Check Recognizer (01)
+Use "Check Recognizer" command to check **recognizer** of Voice Recognition Module.  
 **Format:**  
 | AA | 02 | 01 | 0A |  
 **Return:**  
@@ -190,6 +192,7 @@ NOTE: Data area is different with different with commands.
 [Back to index][index]
 [id02]: #check-record-train-status-02
 #### Check Record Train Status (02)
+Use "Check Record Train Status" command to check if the record is trained.  
 **Format:**  
 *Check all records*  
 | AA | 03 | 02 | FF| 0A |  
@@ -205,6 +208,7 @@ NOTE: Data area is different with different with commands.
 [Back to index][index]
 [id03]: #check-signature-of-one-record-03
 #### Check Signature of One Record (03)
+Use this command to check the signature of one record.  
 **Format:**  
 | AA | 03 | 03 | Record | 0A |  
 **Return:**  
@@ -215,6 +219,7 @@ NOTE: Data area is different with different with commands.
 [Back to index][index]
 [id10]: #restore-system-settings-10
 #### Restore System Settings (10)
+Use this command to restore settings of Voice Recognition Module to default.  
 **Format:**  
 | AA | 02 | 10 | 0A |  
 **Return:**  
@@ -223,6 +228,7 @@ NOTE: Data area is different with different with commands.
 [Back to index][index]
 [id11]: #set-baud-rate-11
 #### Set Baud Rate (11)
+Use this command to set baud rate of Voice Recognition Module, effect after  Voice Recognition Module is restarted.  
 **Format:**  
 | AA | 03 | 11 | BR | 0A |  
 **Return:**  
@@ -232,6 +238,7 @@ NOTE: Data area is different with different with commands.
 [Back to index][index]
 [id12]: #set-output-io-mode-12
 #### Set Output IO Mode (12)
+Use this command to set output IO mode of Voice Recognition Module, take effect immediately after the instruction execution.  
 **Format:**  
 | AA | 03 | 12 | MODE | 0A |  
 **Return:**  
@@ -241,6 +248,7 @@ NOTE: Data area is different with different with commands.
 [Back to index][index]
 [id13]: #set-output-io-pulse-width-13
 #### Set Output IO Pulse Width (13)
+Use this command to set output IO pulse width of Voice Recognition Module, take effect immediately after the instruction execution. Pulse width is used when output IO mode is **"Pulse"**.  
 **Format:**  
 | AA | 03 | 13 | LEVEL | 0A |  
 **Return:**  
@@ -267,6 +275,7 @@ NOTE: Data area is different with different with commands.
 [Back to index][index]
 [id14]: #reset-output-io-14
 #### Reset Output IO (14)
+Use this command to reset output IO. This command can be used in output IO set/clear mode to generate a user-defined pulse.  
 **Format:**  
 | AA| 03 | 14 | FF | 0A |  (reset all output io)  
 | AA| 03+n | 14 | IO0 | ... | IOn | 0A |  (reset output ios)  
@@ -277,6 +286,7 @@ NOTE: Data area is different with different with commands.
 [Back to index][index]
 [id15]: #set-power-on-auto-load-15
 #### Set Power On Auto Load (15)
+Use this command to enable or disable "Power On Auto Load" function.  
 **Format:**  
 | AA| 03 | 15 | 00 | 0A |  (disable auto load)  
 | AA| 03+n | 15 | BITMAP | R0 | ... | Rn | 0A | (set auto load)  
@@ -288,6 +298,7 @@ BITMAP: Record bitmap.( **0**-zero record, disable auto load **01**-one record *
 [Back to index][index]
 [id20]: #train-one-record-or-records-20
 #### Train One Record or Records (20)
+Train records, can train several records one time.  
 **Format:**  
 | AA| 02+n | 20 | R0 | ... | Rn | 0A |   
 **Return:**  
@@ -302,6 +313,7 @@ BITMAP: Record bitmap.( **0**-zero record, disable auto load **01**-one record *
 [Back to index][index]
 [id21]: #train-one-record-and-set-signature-21
 #### Train One Record and Set Signature (21)
+Train one record and set a signature for it, one record one time.  
 **Format:**  
 | AA| 03+SIGLEN | 21 | RECORD | SIG | 0A |  (Set signature)  
 **Return:**  
@@ -315,6 +327,7 @@ BITMAP: Record bitmap.( **0**-zero record, disable auto load **01**-one record *
 [Back to index][index]
 [id22]: #set-signature-for-record-22
 #### Set Signature for Record (22)
+Set a signature for a record, one record one time.
 **Format:**  
 | AA| 04+SIGLEN | 32 | RECORD | SIG | 0A |  (Set signature)
 | AA| 04 | 32 | RECORD | 0A |  (Delete signature)
@@ -327,6 +340,7 @@ BITMAP: Record bitmap.( **0**-zero record, disable auto load **01**-one record *
 [Back to index][index]
 [id30]: #load-a-record-or-records-to-recognizer-30
 #### Load a Record or Records to Recognizer (30)
+Load records(1~7) to recognizer of Voice Recognition Module, after execution the Voice Recognition Module start to recognize immediately.  
 **Format:**  
 | AA| 2+n | 30 | R0 | ... | Rn | 0A |  
 **Return:**  
@@ -339,6 +353,7 @@ STA0~STAn: Load result.(**0**-Success **FF**-Record value out of range **FE**-Re
 [Back to index][index]
 [id31]: #clear-recognizer-31
 #### Clear Recognizer (31)
+Stop recognizing, and empty recognizer of Voice Recognition Module.
 **Format:**  
 | AA | 02 | 31 | 0A |  
 **Return:**  
@@ -348,6 +363,7 @@ STA0~STAn: Load result.(**0**-Success **FF**-Record value out of range **FE**-Re
 [id32]: #group-control-32
 #### Group Control (32)
 ##### Group select  
+Set group control mode(disable, system, user), if group control function is enabled(system or user), then voice recognition module is controlled by the external control IO.   
 **Format:**  
 | AA| 04 | 32 | 00 | MODE | 0A |  
 **MODE**: new group control mode. (00-disable 01-system 02-user FF-check)  
@@ -357,6 +373,7 @@ or
 | AA| 05 | 32 | 00 | FF | MODE | 0A | (check command return)  
 
 ##### Set user group
+Set user group content(record).  
 **Format:**  
 | AA| 03 | 32 | 01 | UGRP | 0A |  (Delete UGRP)  
 | AA| LEN | 32 | 01 | UGRP | R0 | ... | Rn | 0A |  (Set UGRP)  
@@ -366,6 +383,7 @@ or
 | AA| 03 | 32 | 00 | 0A |  (Success return)
 
 ##### Load system group
+Load system group to recognizer, this command would clear recognizer.  
 **Format:**  
 | AA| 04 | 32 | 02 | SGRP | 0A |  
 **Return:**  
@@ -377,6 +395,7 @@ or
 **GRPM**: group mode indicate. (00~0A-system group)  
 
 ##### Load user group
+Load user group to recognizer, this command would clear recognizer.  
 **Format:**  
 | AA| 04 | 32 | 03 | UGRP | 0A |  
 **Return:**  
@@ -387,6 +406,7 @@ or
 **VRMAP**: valid record bit map for VRI0~VRI6.  
 **GRPM**: group mode indicate. (00~0A-system group)  
 ##### Check user group
+Check user group content.  
 **Format:**  
 | AA| 04 | 32 | 04 | 0A | (check all user group)  
 or  
@@ -410,8 +430,9 @@ NONE
 [Back to index][index]
 [id0d]: #voice-recognized-0d
 #### Voice Recognized (0D)
+**Voice Recognized** command is only used for Voice Recognition Module to return data when voice is recognized.  
 **Format:**  
-**Voice Recognized** command is only used for Voice Recognition Module to return data when voice is recognized.   
+NONE  
 **Return:**  
 | AA | 07 | 0D | 00 | GRPM | R | RI | SIGLEN | SIG | 0A |  
 **GRPM**: group mode indicate. (FF-not in group mode 00~0A-system group mode 80~87-user group mode)  
@@ -433,6 +454,8 @@ NONE
 
 [Back to index][index]
 
+## Library Reference
+See `VoiceRecognitionV2.cpp` to get more information.
 
 ## Buy ##
 [![elechouse][EHICON]][EHLINK]
