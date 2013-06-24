@@ -455,7 +455,7 @@ NONE
 [Back to index][index]
 
 ## Library Reference
-See `VoiceRecognitionV2.cpp` to get more information.
+See `VoiceRecognitionV2.cpp` or [libref.pdf][libref] to get more information.
 
 ## Buy ##
 [![elechouse][EHICON]][EHLINK]
@@ -481,3 +481,5 @@ See `VoiceRecognitionV2.cpp` to get more information.
 [Arduino]: http://arduino.cc/en/
 
 [dzip]: https://github.com/elechouse/VoiceRecognitionV2/archive/master.zip
+
+[libref]: https://github.com/elechouse/VoiceRecognitionV2/blob/master/libref.pdf?raw=true
