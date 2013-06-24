@@ -154,17 +154,19 @@ public:
 	int resetIO(uint8_t *ios=0, uint8_t len=1);
 	int setPulseWidth(uint8_t level);
 	int setAutoLoad(uint8_t *records=0, uint8_t len = 0);
+    int disableAutoLoad();
 	int restoreSystemSettings();
 	int checkSystemSettings(uint8_t* buf);
 	int recognize(uint8_t *buf, int timeout = VR_DEFAULT_TIMEOUT);
-	
 	int train(uint8_t *records, uint8_t len=1, uint8_t *buf = 0);
+	int train(uint8_t record, uint8_t *buf = 0);
 	int trainWithSignature(uint8_t record, const void *buf, uint8_t len=0, uint8_t *retbuf = 0);
 	int load(uint8_t *records, uint8_t len=1, uint8_t *buf = 0);
 	int load(uint8_t record, uint8_t *buf = 0);
 	int clear();
 	int setSignature(uint8_t record, const void *buf=0, uint8_t len=0);
-	
+	int deleteSignature(uint8_t record);
+    
 	int checkSignature(uint8_t record, uint8_t *buf);
 	int checkRecognizer(uint8_t *buf);
 	int checkRecord(uint8_t *buf, uint8_t *records = 0, uint8_t len = 0);
