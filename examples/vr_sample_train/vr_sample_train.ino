@@ -655,7 +655,7 @@ void printSeperator()
              buf[i+1]   -->  Record number.(0xFF: Not loaded(Nongroup mode), or not set (Group mode)) (i= 0, 1, ... 6)
              buf[8]     -->  Number of all voice records in recognizer
              buf[9]     -->  Valid records position indicate.
-             buf[10]    -->  Group mode indicate(FF: None Group, 0x8n: User, 0x0n:System
+             buf[10]    -->  Group mode indicate(FF: None Group, 0x8n: User, 0x0n:System)
 */
 void printCheckRecognizer(uint8_t *buf)
 {
@@ -777,7 +777,7 @@ void printUserGroup(uint8_t *buf, int len)
 
 /**
   @brief   Print "load" command return value.
-  @param   buf  -->  "load" command command return value
+  @param   buf  -->  "load" command return value
              buf[0]    -->  number of records which are load successfully.
              buf[2i+1]  -->  record number
              buf[2i+2]  -->  record load status.
@@ -786,7 +786,7 @@ void printUserGroup(uint8_t *buf, int len)
                 FD --> Recognizer full
                 FE --> Record untrained
                 FF --> Value out of range"
-             (i = 0 ~ len-1 )
+             (i = 0 ~ (len-1)/2 )
            len  -->  length of buf
 */
 void printLoad(uint8_t *buf, uint8_t len)
@@ -827,10 +827,10 @@ void printLoad(uint8_t *buf, uint8_t len)
 
 /**
   @brief   Print "train" command return value.
-  @param   buf  -->  "load" command command return value
+  @param   buf  -->  "train" command return value
              buf[0]    -->  number of records which are trained successfully.
              buf[2i+1]  -->  record number
-             buf[2i+2]  -->  record load status.
+             buf[2i+2]  -->  record train status.
                 00 --> Trained 
                 FE --> Train Time Out
                 FF --> Value out of range"
@@ -869,11 +869,11 @@ void printTrain(uint8_t *buf, uint8_t len)
 }
 
 /**
-  @brief   Print "train" command return value.
-  @param   buf  -->  "load" command command return value
+  @brief   Print "sigtrain" command return value.
+  @param   buf  -->  "sigtrain" command return value
              buf[0]  -->  number of records which are trained successfully.
              buf[1]  -->  record number
-             buf[2]  -->  record load status.
+             buf[2]  -->  record train status.
                 00 --> Trained 
                 F0 --> Trained, signature truncate
                 FE --> Train Time Out
@@ -915,6 +915,20 @@ void printSigTrain(uint8_t *buf, uint8_t len)
   Serial.write(buf+3, len-3);
   Serial.println();
 }
+
+/**
+  @brief   Print "settings" command return value.
+  @param   buf  -->  "settings" command return value
+             buf[0]  -->  number of records which are trained successfully.
+             buf[1]  -->  record number
+             buf[2]  -->  record train status.
+                00 --> Trained 
+                F0 --> Trained, signature truncate
+                FE --> Train Time Out
+                FF --> Value out of range"
+             buf[3] ~ buf[len-1] --> Signature.
+           len  -->  length of buf
+*/
 
 const unsigned int io_pw_tab[16]={
   10,  15,  20,  25,  30,  35,  40,  45, 
