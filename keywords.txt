@@ -12,22 +12,31 @@ myVR	KEYWORD1
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
-
-recognize	KEYWORD2
-load	KEYWORD2
-train	KEYWORD2
-clear	KEYWORD2
 setBaudRate	KEYWORD2
 setIOMode	KEYWORD2
 resetIO	KEYWORD2
 setPulseWidth	KEYWORD2
 setAutoLoad	KEYWORD2
+disableAutoLoad	KEYWORD2
+restoreSystemSettings	KEYWORD2
+checkSystemSettings	KEYWORD2
+recognize	KEYWORD2
+train	KEYWORD2
 trainWithSignature	KEYWORD2
+load	KEYWORD2
+clear	KEYWORD2
 setSignature	KEYWORD2
+deleteSignature	KEYWORD2
 checkSignature	KEYWORD2
 checkRecognizer	KEYWORD2
 checkRecord	KEYWORD2
-setSignature	KEYWORD2
+setGroupControl	KEYWORD2
+checkGroupControl	KEYWORD2
+setUserGroup	KEYWORD2
+checkUserGroup	KEYWORD2
+loadSystemGroup	KEYWORD2
+loadUserGroup	KEYWORD2
+
 test	KEYWORD2
 
 #######################################
@@ -41,7 +50,7 @@ CLEAR	LITERAL1
 
 LEVEL0	LITERAL1
 LEVEL1	LITERAL1
-LEVEL2	LITERAL1 
+LEVEL2	LITERAL1
 LEVEL3	LITERAL1
 LEVEL4	LITERAL1
 LEVEL5	LITERAL1
@@ -55,3 +64,12 @@ LEVEL12	LITERAL1
 LEVEL13	LITERAL1
 LEVEL14	LITERAL1
 LEVEL15	LITERAL1
+
+GROUP0	LITERAL1
+GROUP1	LITERAL1
+GROUP2	LITERAL1
+GROUP3	LITERAL1
+GROUP4	LITERAL1
+GROUP5	LITERAL1
+GROUP6	LITERAL1
+GROUP7	LITERAL1
