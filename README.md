@@ -98,7 +98,10 @@ This sample shows how to use multi commands(Break 7 voice command limits),this s
 
 ***Note: Before start this sample, you need train your Voice Recognition module first, and make sure that all records from 0 to 12 should be trained.***
 
-![bridge](./image/multi-cmd-0.jpg)
+### vr\_sample\_check\_baud\_rate
+This sample is used to check the baud rate, when you forgot your custom settings. 
+
+![bridge](./image/check_br.jpg)
 
 
 [Protocol]: #protocol
