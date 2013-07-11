@@ -333,8 +333,8 @@ Train one record and set a signature for it, one record one time.
 #### Set Signature for Record (22)
 Set a signature for a record, one record one time.  
 **Format:**  
-| AA | 03+SIGLEN | 32 | RECORD | SIG | 0A |  (Set signature)  
-| AA | 03 | 32 | RECORD | 0A |  (Delete signature)  
+| AA | 03+SIGLEN | 22 | RECORD | SIG | 0A |  (Set signature)  
+| AA | 03 | 22 | RECORD | 0A |  (Delete signature)  
 **Return:**  
 | AA | 04+SIGLEN | 22 | 00 | RECORD | SIG | 0A |  (Set signature return)  
 | AA | 04 | 22 | 00 | RECORD | 0A |  (Delete signature return)  
