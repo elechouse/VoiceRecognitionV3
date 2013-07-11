@@ -171,7 +171,8 @@ Use "Check System Settings" command to check current settings of Voice Recogniti
 **Format:**  
 | AA | 02 | 00 | 0A |  
 **Return:**  
-| AA | 08 | 00 | STA | BR | IOM | IOPW | AL | GRP | 0A |   
+| AA | 08 | 00 | STA | BR | IOM | IOPW | AL | GRP | 0A |  
+**STA** : Trained status (0-untrained 1-trained FF-record value out of range)  
 **BR**: Baud rate (0,3-9600 1-2400 2-4800 4-19200 5-38400)  
 **IOM**: Outpu IO Mode (0-Pulse 1-Toggle 2-Clear 3-Set)  
 **IOPW**: Outpu IO Pulse Width(Pulse Mode) (1~15)  
@@ -185,7 +186,7 @@ Use "Check Recognizer" command to check **recognizer** of Voice Recognition Modu
 **Format:**  
 | AA | 02 | 01 | 0A |  
 **Return:**  
-| AA | 0D | 01 | RN | VRI0 | VRI1 | VRI2 | VRI3 | VRI4 | VRI5 | VRI6 | RTN | VRMAP | GRPM | 0A |  
+| AA | 0D | 01 | RVN | VRI0 | VRI1 | VRI2 | VRI3 | VRI4 | VRI5 | VRI6 | RTN | VRMAP | GRPM | 0A |  
 **RVN**: number of valid records in recognizer. (MAX 7)  
 **VRIn**(n=0~6): Record which is in recognizer, n is recognizer index value  
 **RTN**: number of total records in recognizer.  
@@ -200,9 +201,9 @@ Use "Check Record Train Status" command to check if the record is trained.
 *Check all records*  
 | AA | 03 | 02 | FF| 0A |  
 *Check specified records*  
-| AA | 02+n | 02 | R0 | ... | Rn | 0A |  
+| AA | 03+n | 02 | R0 | ... | Rn | 0A |  
 **Return:**  
-| AA | 3+2*n | 02 | N | R0 | STA | ... | Rn | STA | 0A |  
+| AA | 5+2*n | 02 | N | R0 | STA | ... | Rn | STA | 0A |  
 **N**: number of trained records.  
 **R0 ~ Rn**: record.  
 **STA** : trained status (0-untrained 1-trained FF-record value out of range)  
@@ -216,7 +217,7 @@ Use this command to check the signature of one record.
 | AA | 03 | 03 | Record | 0A |  
 **Return:**  
 | AA | 03 | 03 | Record | SIGLEN | SIGNATURE | 0A |  
-**SIGLEN**: signature string length
+**SIGLEN**: signature string length  
 **SIGNATURE**: signature string
 
 [Back to index][index]
@@ -295,7 +296,7 @@ Use this command to enable or disable "Power On Auto Load" function.
 | AA| 03+n | 15 | BITMAP | R0 | ... | Rn | 0A | (set auto load)  
 **Return:**  
 | AA| 04+n | 15 | 00 |BITMAP | R0 | ... | Rn | 0A | (set auto load)  
-BITMAP: Record bitmap.( **0**-zero record, disable auto load **01**-one record **03**-two records **07**-three records **0F**-four records **1F**-five records **3F**-six record **7F**-seven records )  
+**BITMAP**: Record bitmap.( **0**-zero record, disable auto load **01**-one record **03**-two records **07**-three records **0F**-four records **1F**-five records **3F**-six record **7F**-seven records )  
 **R0~Rn**: Record  
 
 [Back to index][index]
@@ -303,10 +304,10 @@ BITMAP: Record bitmap.( **0**-zero record, disable auto load **01**-one record *
 #### Train One Record or Records (20)
 Train records, can train several records one time.  
 **Format:**  
-| AA| 02+n | 20 | R0 | ... | Rn | 0A |   
+| AA| 03+n | 20 | R0 | ... | Rn | 0A |   
 **Return:**  
 | AA| LEN | 0A | RECORD | PROMPT | 0A |  
-| AA| 03+2*n | 20 | N | R0 | STA0 | ... | Rn | STAn | SIG | 0A |  
+| AA| 05+2*n | 20 | N | R0 | STA0 | ... | Rn | STAn | SIG | 0A |  
 **SIG**: signature string  
 **PROMPT**: prompt string  
 **Rn**: Record  
@@ -330,10 +331,10 @@ Train one record and set a signature for it, one record one time.
 [Back to index][index]
 [id22]: #set-signature-for-record-22
 #### Set Signature for Record (22)
-Set a signature for a record, one record one time.
+Set a signature for a record, one record one time.  
 **Format:**  
-| AA| 04+SIGLEN | 32 | RECORD | SIG | 0A |  (Set signature)
-| AA| 04 | 32 | RECORD | 0A |  (Delete signature)
+| AA | 03+SIGLEN | 32 | RECORD | SIG | 0A |  (Set signature)  
+| AA | 03 | 32 | RECORD | 0A |  (Delete signature)  
 **Return:**  
 | AA | 04+SIGLEN | 22 | 00 | RECORD | SIG | 0A |  (Set signature return)  
 | AA | 04 | 22 | 00 | RECORD | 0A |  (Delete signature return)  
