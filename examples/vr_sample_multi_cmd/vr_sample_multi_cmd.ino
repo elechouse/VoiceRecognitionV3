@@ -15,7 +15,7 @@
   */
   
 #include <SoftwareSerial.h>
-#include "VoiceRecognitionV2.h"
+#include "VoiceRecognitionV3.h"
 
 /**        
   Connection
@@ -54,7 +54,7 @@ void setup()
   myVR.begin(9600);
   
   Serial.begin(115200);
-  Serial.println("Elechouse Voice Recognition V2 Module\r\nMulti Commands sample");
+  Serial.println("Elechouse Voice Recognition V3 Module\r\nMulti Commands sample");
   
   pinMode(led, OUTPUT);
     

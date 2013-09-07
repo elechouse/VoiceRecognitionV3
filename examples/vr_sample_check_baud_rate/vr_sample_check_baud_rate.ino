@@ -13,7 +13,7 @@
  * 2013/07/10    Initial version.
  */
 #include <SoftwareSerial.h>
-#include "VoiceRecognitionV2.h"  
+#include "VoiceRecognitionV3.h"  
 /**        
  * Connection
  * Arduino    VoiceRecognitionModule
@@ -31,7 +31,7 @@ void setup(void)
   /** initialize */
   int i=0;
   Serial.begin(115200);
-  Serial.println("Elechouse Voice Recognition V2 Module\r\nCheck Baud Rate sample");
+  Serial.println("Elechouse Voice Recognition V3 Module\r\nCheck Baud Rate sample");
   for(i=0; i<5; i++){
     myVR.begin(br[i]);
     if(myVR.clear() == 0){

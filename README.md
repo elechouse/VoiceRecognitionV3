@@ -1,9 +1,9 @@
-# Voice Recognition V2 **(WIP)**
-[START]: #voice-recognition-v2-wip
+# Voice Recognition V3 **(WIP)**
+[START]: #voice-recognition-v3-wip
 
 ## Feature
 - Recognize maximum 7 voice commands at same time
-- Store maximum 80 records of voice
+- Store maximum 255 records of voice
 - Group control and external group select pin
 - Auto load records when power on
 - Signature function, help to make out voice record
@@ -23,21 +23,21 @@
 ## Quick Start
 
 ### Prepare
-+ [Voice Recognition V2][VRV2] module
++ [Voice Recognition V3][VRV3] module
 + [Arduino][Arduino] board ([UNO][UNO] recommended)
 + [Arduino Sensor Shield V07][SensorShieldV7]
 + [Arduino IDE][ArduinoIDE]
-+ Voice Recognition V2 library([Download zip file][dzip])
++ Voice Recognition V3 library([Download zip file][dzip])
 + [Access Port][accessport]
 
 [idtrain]: #train
 ### Train
-1. Connect your Voice Recognition V2 Module with Arduino, By Default:  
+1. Connect your Voice Recognition V3 Module with Arduino, By Default:  
 ![connection](./image/connection.jpg)
 
-1. Download VoiceRecognitionV2 library.(download [zip][dzip] file or use `git clone https://github.com/elechouse/VoiceRecognitionV2.git` command)
-1. When use zip format file, extract **VoiceRecognitionV2.zip** to `Arduino Sketch\libraries` folder, or if you use `git clone` command copy **VoiceRecognitionV2** to `Arduino Sketch\libraries` .
-1. Open **vr\_sample\_train**(File -> Examples -> VoiceRecognitionV2 -> vr\_sample\_train)
+1. Download VoiceRecognitionV3 library.(download [zip][dzip] file or use `git clone https://github.com/elechouse/VoiceRecognitionV3.git` command)
+1. When use zip format file, extract **VoiceRecognitionV3.zip** to `Arduino Sketch\libraries` folder, or if you use `git clone` command copy **VoiceRecognitionV3** to `Arduino Sketch\libraries` .
+1. Open **vr\_sample\_train**(File -> Examples -> VoiceRecognitionV3 -> vr\_sample\_train)
 1. Choose right Arduino board(Tool -> Board, UNO recommended), Choose right serial port.
 1. Click **Upload** button, wait until Arduino is uploaded.
 1. Open **Serial Monitor**. Set baud rate 115200, set send with **Newline** or **Both NL & CR**.  
@@ -65,7 +65,7 @@
 ### Application
 [controlled]: #control-led-sample
 #### Control LED Sample
-1. Open **vr\_sample\_control\_led**(File -> Examples -> VoiceRecognitionV2 -> vr\_sample\_control\_led)
+1. Open **vr\_sample\_control\_led**(File -> Examples -> VoiceRecognitionV3 -> vr\_sample\_control\_led)
 1. Choose right Arduino board(Tool -> Board, UNO recommended), Choose right serial port.
 1. Click **Upload** button, wait until Arduino is uploaded.
 1. Open **Serial Monitor**. Set baud rate 115200.
@@ -106,7 +106,7 @@ This sample is used to check the baud rate, when you forgot your custom settings
 
 [Protocol]: #protocol
 ## Protocol
-The simplest way to play the Voice Recognition V2 module is to use this VoiceRecognition Arduino library. But for many **hackers**, this is far from enough, so we supply this protocol by which user can communicate with the Voice Recognition V2 module.
+The simplest way to play the Voice Recognition V3 module is to use this VoiceRecognition Arduino library. But for many **hackers**, this is far from enough, so we supply this protocol by which user can communicate with the Voice Recognition V3 module.
 
 ### Base Format
 
@@ -459,7 +459,7 @@ NONE
 [Back to index][index]
 
 ## Library Reference
-See `VoiceRecognitionV2.cpp` or [libref.pdf][libref] to get more information.
+See `VoiceRecognitionV3.cpp` or [libref.pdf][libref] to get more information.
 
 ## Buy ##
 [![elechouse][EHICON]][EHLINK]
@@ -480,10 +480,10 @@ See `VoiceRecognitionV2.cpp` or [libref.pdf][libref] to get more information.
 
 [UNO]: http://arduino.cc/en/Main/arduinoBoardUno
 
-[VRV2]: http://www.elechouse.com
+[VRV3]: http://www.elechouse.com
 
 [Arduino]: http://arduino.cc/en/
 
-[dzip]: https://github.com/elechouse/VoiceRecognitionV2/archive/master.zip
+[dzip]: https://github.com/elechouse/VoiceRecognitionV3/archive/master.zip
 
-[libref]: https://github.com/elechouse/VoiceRecognitionV2/blob/master/libref.pdf?raw=true
+[libref]: https://github.com/elechouse/VoiceRecognitionV3/blob/master/libref.pdf?raw=true

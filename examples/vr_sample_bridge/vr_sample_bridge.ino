@@ -19,7 +19,7 @@
   */
   
 #include <SoftwareSerial.h>
-#include "VoiceRecognitionV2.h"
+#include "VoiceRecognitionV3.h"
 
 /**        
   Connection
@@ -45,7 +45,7 @@ void setup(void)
   
   /** initialize */
   Serial.begin(115200);
-  Serial.println(F("Elechouse Voice Recognition V2 Module \"bridge\" sample."));
+  Serial.println(F("Elechouse Voice Recognition V3 Module \"bridge\" sample."));
   Serial.println(F("Eg:\r\n1. Enable Arduino Serial monitor \"Send with newline\" feture, Baud rate 115200.\r\n2. Input \"01\" to \"check recognizer\".\r\n3. input \"31\" to \"clear recognizer\"\r\n4. input \"30 00 02 04\" to \"load record 0, record 2, record 4\""));
 }
 

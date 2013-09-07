@@ -26,7 +26,7 @@
   * <h2><center>&copy; COPYRIGHT 2013 ELECHOUSE</center></h2>
   ******************************************************************************
   */
-#include "VoiceRecognitionV2.h"
+#include "VoiceRecognitionV3.h"
 #include <string.h>
 
 VR* VR::instance;
@@ -451,16 +451,18 @@ int VR :: checkRecord(uint8_t *buf, uint8_t *records, uint8_t len)
 	int cnt = 0;
 	unsigned long start_millis;
 	if(records == 0 && len==0){
+        memset(buf, 0xF0, 255);
 		send_pkt(FRAME_CMD_CHECK_TRAIN, 0xFF, 0, 0);
 		start_millis = millis();
 		while(1){
 			len = receive_pkt(vr_buf);
 			if(len>0){
 				if(vr_buf[2] == FRAME_CMD_CHECK_TRAIN){
-					memcpy(buf+1+10*cnt, vr_buf+4, vr_buf[1]-3);
+                    for(int i=0; i<vr_buf[1]-3; i+=2){
+                        buf[vr_buf[4+i]]=vr_buf[4+i+1];
+                    }
 					cnt++;
-					if(cnt == 16){
-						buf[0] = 80;
+					if(cnt == 51){
 						return vr_buf[3];
 					}
 				}else{

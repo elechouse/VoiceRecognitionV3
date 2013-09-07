@@ -25,7 +25,7 @@
  * 2013/06/13    Initial version.
  */
 #include <SoftwareSerial.h>
-#include "VoiceRecognitionV2.h"
+#include "VoiceRecognitionV3.h"
 
 /**        
  * Connection
@@ -45,6 +45,7 @@ void printTrain(uint8_t *buf, uint8_t len);
 void printCheckRecognizer(uint8_t *buf);
 void printUserGroup(uint8_t *buf, int len);
 void printCheckRecord(uint8_t *buf, int num);
+void printCheckRecordAll(uint8_t *buf, int num);
 void printSigTrain(uint8_t *buf, uint8_t len);
 void printSystemSettings(uint8_t *buf, int len);
 void printHelp(void);
@@ -133,7 +134,7 @@ cmd_function_t cmdFunction[CMD_NUM]={      // command handle fuction(function po
 
 /***************************************************************************/
 /** temprory data */
-uint8_t buf[200];
+uint8_t buf[255];
 uint8_t records[7]; // save record
 
 void setup(void)
@@ -142,7 +143,7 @@ void setup(void)
 
   /** initialize */
   Serial.begin(115200);
-  Serial.println(F("Elechouse Voice Recognition V2 Module \"train\" sample."));
+  Serial.println(F("Elechouse Voice Recognition V3 Module \"train\" sample."));
 
   printSeperator();
   Serial.println(F("Usage:"));
@@ -498,7 +499,7 @@ int cmdRecord(int len, int paraNum)
     ret = myVR.checkRecord(buf);
     printSeperator();
     if(ret>=0){
-      printCheckRecord(buf, ret);
+      printCheckRecordAll(buf, ret);
     }
     else{
       Serial.println(F("Check record failed or timeout."));
@@ -797,6 +798,52 @@ void printCheckRecord(uint8_t *buf, int num)
     Serial.print(buf[i+1], DEC);
     Serial.print(F("\t-->\t"));
     switch(buf[i+2]){
+    case 0x01:
+      Serial.print(F("Trained"));
+      break;
+    case 0x00:
+      Serial.print(F("Untrained"));
+      break;
+    case 0xFF:
+      Serial.print(F("Record value out of range"));
+      break;
+    default:
+      Serial.print(F("Unknown Stauts"));
+      break;
+    }
+    Serial.println();
+  }
+}
+
+/**
+ * @brief   Print record train status.
+ * @param   buf  -->  Check record command return value
+ * buf[0]     -->  Number of checked records
+ * buf[2i+1]  -->  Record number.
+ * buf[2i+2]  -->  Record train status. (00: untrained, 01: trained, FF: record value out of range)
+ * (i = 0 ~ buf[0]-1 )
+ * num  -->  Number of trained records
+ */
+void printCheckRecordAll(uint8_t *buf, int num)
+{
+  Serial.print(F("Check 255"));
+  Serial.println(F(" records."));
+
+  Serial.print(num, DEC);
+  if(num>1){
+    Serial.println(F(" records trained."));
+  }
+  else{
+    Serial.println(F(" record trained."));
+  }
+  myVR.writehex(buf, 255);
+  for(int i=0; i<255; i++){
+    if(buf[i] == 0xF0){
+      continue;
+    }
+    Serial.print(i, DEC);
+    Serial.print(F("\t-->\t"));
+    switch(buf[i]){
     case 0x01:
       Serial.print(F("Trained"));
       break;

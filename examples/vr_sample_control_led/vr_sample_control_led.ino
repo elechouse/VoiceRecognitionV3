@@ -14,7 +14,7 @@
   */
   
 #include <SoftwareSerial.h>
-#include "VoiceRecognitionV2.h"
+#include "VoiceRecognitionV3.h"
 
 /**        
   Connection
@@ -97,11 +97,13 @@ void printVR(uint8_t *buf)
 void setup()
 {
   /** initialize */
+  myVR.begin(9600);
+  
   Serial.begin(115200);
-  Serial.println("Elechouse Voice Recognition V2 Module\r\nControl LED sample");
+  Serial.println("Elechouse Voice Recognition V3 Module\r\nControl LED sample");
   
   pinMode(led, OUTPUT);
-  
+    
   if(myVR.clear() == 0){
     Serial.println("Recognizer cleared.");
   }else{
