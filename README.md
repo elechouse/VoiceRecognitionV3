@@ -487,3 +487,7 @@ See `VoiceRecognitionV3.cpp` or [libref.pdf][libref] to get more information.
 [dzip]: https://github.com/elechouse/VoiceRecognitionV3/archive/master.zip
 
 [libref]: https://github.com/elechouse/VoiceRecognitionV3/blob/master/libref.pdf?raw=true
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/elechouse/voicerecognitionv3/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
