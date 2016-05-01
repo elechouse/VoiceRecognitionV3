@@ -1138,7 +1138,7 @@ int VR :: writehex(uint8_t *buf, uint8_t len)
 void VR :: send_pkt(uint8_t cmd, uint8_t subcmd, uint8_t *buf, uint8_t len)
 {
 	while(available()){
-		flush();
+		read();// replace flush();
 	}
 	write(FRAME_HEAD);
 	write(len+3);
@@ -1157,7 +1157,7 @@ void VR :: send_pkt(uint8_t cmd, uint8_t subcmd, uint8_t *buf, uint8_t len)
 void VR :: send_pkt(uint8_t cmd, uint8_t *buf, uint8_t len)
 {
 	while(available()){
-		flush();
+		read();// replace flush();
 	}
 	write(FRAME_HEAD);
 	write(len+2);
@@ -1174,7 +1174,7 @@ void VR :: send_pkt(uint8_t cmd, uint8_t *buf, uint8_t len)
 void VR :: send_pkt(uint8_t *buf, uint8_t len)
 {
 	while(available()){
-		flush();
+		read();// replace flush();
 	}
 	write(FRAME_HEAD);
 	write(len+1);
