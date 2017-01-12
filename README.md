@@ -480,7 +480,7 @@ See `VoiceRecognitionV3.cpp` or [libref.pdf][libref] to get more information.
 
 [UNO]: http://arduino.cc/en/Main/arduinoBoardUno
 
-[VRV3]: http://www.elechouse.com
+[VRV3]: http://www.elechouse.com/elechouse/index.php?main_page=product_info&cPath=&products_id=2254
 
 [Arduino]: http://arduino.cc/en/
 
