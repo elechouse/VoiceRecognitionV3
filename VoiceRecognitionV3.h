@@ -26,7 +26,10 @@
   * <h2><center>&copy; COPYRIGHT 2013 ELECHOUSE</center></h2>
   ******************************************************************************
   */
-  
+
+#ifndef VOICERECOGNITION_H
+#define VOICERECOGNITION_H
+
 #if ARDUINO >= 100
  #include "Arduino.h"
 #else
@@ -200,3 +203,4 @@ private:
 	static VR*  instance;
 };
 
+#endif  //VOICERECOGNITION_H
