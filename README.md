@@ -110,24 +110,22 @@ The simplest way to play the Voice Recognition V3 module is to use this VoiceRec
 
 ### Base Format
 
-#### Control
-**| Head (0AAH) | Length| Command | Data | End (0AH) |**  
+Each control message and return message starts with a frame head "AA" (hexadecimal) and ends
+with a frame end "0A" (hexadecimal).
+
+#### Format Control Messages
+**| AA | Length | Command Code | Data | 0A |**  
 Length = L(Length + Command + Data)
 
-#### Return
-**| Head (0AAH) | Length| Command | Data | End (0AH) |**  
+#### Format Return Messages
+**| AA | Length | Command Code | Data | 0A |**  
 Length = L(Length + Command + Data)
 
 NOTE: Data area is different with different with commands.
 
-### Code
+### Command Codes
 [index]: #code
 ***ALL CODE ARE IN HEXADECIMAL FORMAT***
-
----  
-***FRAME CODE***  
-**AA** --> Frame Head  
-**0A** --> Frame End  
 
 ---
 ***CHECK***  
@@ -216,7 +214,7 @@ Use this command to check the signature of one record.
 **Format:**  
 | AA | 03 | 03 | Record | 0A |  
 **Return:**  
-| AA | 03 | 03 | Record | SIGLEN | SIGNATURE | 0A |  
+| AA | 4+SIGLEN | 03 | Record | SIGLEN | SIGNATURE | 0A |  
 **SIGLEN**: signature string length  
 **SIGNATURE**: signature string
 
