@@ -216,7 +216,7 @@ Use this command to check the signature of one record.
 **Format:**  
 | AA | 03 | 03 | Record | 0A |  
 **Return:**  
-| AA | 03 | 03 | Record | SIGLEN | SIGNATURE | 0A |  
+| AA | 4+SIGLEN | 03 | Record | SIGLEN | SIGNATURE | 0A |  
 **SIGLEN**: signature string length  
 **SIGNATURE**: signature string
 
